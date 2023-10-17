@@ -27,6 +27,8 @@ function Previousreport() {
     const [update, setUpdate] = useState([]);
     const [showDialog, setShowDialog] = useState(false);
     const [updatedate, setupdatedate] = React.useState(dayjs());
+    const [updateMicrochip, setupdateMicrochip] = React.useState(dayjs()); 
+  const [microchip,setMicrochip] = useState([])
     const columns = [
       { field: 'id', headerName: 'ID', width: 70 },
       { field: 'doc', headerName: 'Doc', width: 130 },
@@ -35,8 +37,9 @@ function Previousreport() {
       { field: 'name', headerName: 'Name', width: 130 },
       { field: 'amount', headerName: 'Amount', width: 130 },
       { field: 'membership', headerName: 'Membership', width: 130 },
-      { field: 'cash', headerName: 'Cash', width: 130 },
+      { field: 'cash', headerName: 'Payment Method', width: 130 },
       { field: 'being', headerName: 'Being', width: 130 },
+      {headerName: "Microchip ",field: "microchip",width: 150,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
   
           {
         title: "Action",
@@ -72,6 +75,7 @@ function Previousreport() {
   const updateRow = async()=>{
     var obj = {
       date:updatedate ,
+      microchip:updateMicrochip,
       ...date,
     } 
 
@@ -265,7 +269,7 @@ useEffect(()=>{
               sx={{ width: 500 }}
               label="Cash"
               variant="outlined"
-              type="number"
+              // type="number"
               required
               name='cash'
               value={update.cash}
@@ -287,7 +291,24 @@ useEffect(()=>{
             />
           </div>
         </div>
-     
+        <div className="row my-3 ">
+          <div className="col ">
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                  name="date"
+                    sx={{ width: 500 }}
+                    label="Date of Microchip implementation"
+                    value={updateMicrochip}
+                      onChange={(newValue) => {
+                        setupdateMicrochip(newValue);
+                      }}
+                    renderInput={(params) => (
+                      <TextField name="date" {...params}      />
+                    )}
+                  />
+                </LocalizationProvider>
+          </div>
+        </div>
         </form>
             </DialogContent>
             <DialogActions>

@@ -28,7 +28,10 @@ function Home() {
   const [update, setUpdate] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
   const [updatedate, setupdatedate] = React.useState(dayjs());
-  const [formdate,setFormDate]= useState()
+  const [updateMicrochip, setupdateMicrochip] = React.useState(dayjs());
+
+  const [microchip,setMicrochip] = useState([])
+  const [count, setCount] = useState();
   const history = useHistory();
 
   const columns = [
@@ -39,8 +42,9 @@ function Home() {
     { field: 'name', headerName: 'Name', width: 130 },
     { field: 'amount', headerName: 'Amount', width: 130 },
     { field: 'membership', headerName: 'Membership', width: 130 },
-    { field: 'cash', headerName: 'Cash', width: 130 },
+    { field: 'cash', headerName: 'Payment Method', width: 130 },
     { field: 'being', headerName: 'Being', width: 130 },
+    {headerName: "Microchip ",field: "microchip",width: 150,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
 
         {
       title: "Action",
@@ -69,31 +73,64 @@ function Home() {
   ];
 
   // ------------------------------------------Post api here -------------------------------------------------------------
-  // const {register,handleSubmit}=useForm();
-  
+
   const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm();
-  const onSubmit = async (data)=>{
-    var obj = {
-      date: selectedDate,
-      ...data,
-    };
-    
-    const combinedObj = {...data ,...obj};
-    
+  const onSubmit = async (data,action)=>{
+ 
+    if(action === 'save'){
+      var obj = {
+        date: selectedDate,
+        doc:count,
+        microchip:microchip,
+        ...data,
+      };
+      try {
+        await axios.post(`${process.env.REACT_APP_DEVELOPMENT}/api/qgl`,obj)
+        // setCount(count + 1);
+        setCount((prevCount) => prevCount + 1);
+        console.log('Data saved successfully');
      
-    try {
-     await axios.post(`${process.env.REACT_APP_DEVELOPMENT}/api/qgl`,obj)
-     .then(response=>{
-      history.push('/Receiptpdf', { data: combinedObj });
-  
-    })
-    } catch(error) {
-      console.log(error,"This is error")
+       } catch(error) {
+         console.log(error,"This is error")
+       }
     }
+    else if(action === 'print'){
+      var obj = {
+        date: selectedDate,
+        doc:count,
+        microchip:microchip,
+        ...data,
+      };
+      const combinedObj = {...data ,...obj};
+      try {
+        await axios.post(`${process.env.REACT_APP_DEVELOPMENT}/api/qgl`,obj)
+        .then(response=>{
+          // setCount((prevCount) => prevCount + 1);
+          history.push('/Receiptpdf', { data:combinedObj });
+       })
+       } catch(error) {
+         console.log(error,"This is error")
+       }
+    }
+     
     alldata();
     reset();
+    }
+   
+    
+     
+ 
+  // const {register,handleSubmit}=useForm();
+  const handleSaveButtonClick = () => {
+    // Trigger the form submission with the 'save' action
+    handleSubmit((formData) => onSubmit(formData, 'save'))();
+  };
 
-  }
+  const handlePrintButtonClick = () => {
+    // Trigger the form submission with the 'print' action
+    handleSubmit((formData) => onSubmit(formData, 'print'))();
+  };
+  
   // ------------------------------------------update api here -------------------------------------------------------------
 
   const updateData = (e)=>{
@@ -103,6 +140,7 @@ function Home() {
   const updateRow = async()=>{
     var obj = {
       date:updatedate ,
+      microchip:updateMicrochip,
       ...date,
     } 
 
@@ -125,14 +163,31 @@ function Home() {
 
       const alldata= async()=>{
         try {
+         
           await axios.get(`${process.env.REACT_APP_DEVELOPMENT}/api/getreceipt`)
           .then(response=>{
-            // setData(response.data)
+              if(response){
+
+                // setCount(parseInt(response.data[0].doc) + 1);
+                // console.log(response.data[0].doc)
+                // console.log(response.data[0].doc + 1);
+                const highestDocNumber = response.data.reduce((max, item) => Math.max(max, item.doc), 0);
+
+                // Update the count to the next available document number
+                setCount(highestDocNumber + 1);
+              } 
+              if (response) {
+                const existingDocuments = response.data.map((doc, index) => ({ ...doc, id: index + 1 }));
+                setCount(existingDocuments.length + 1);
+              }
+              // setCount(response.data[0].doc + 1)
             let arr = response.data.map((item,index) =>({
               ...item,
               id:index +1,
             }));
+ 
             setData(arr)
+
           })
         } catch (error) {
           console.log(error)
@@ -142,6 +197,7 @@ function Home() {
 
 useEffect(()=>{
   alldata()
+  deleteRow()
 },[])
 // console.log(data,'here i am cheack the data')
 
@@ -152,29 +208,27 @@ useEffect(()=>{
       await axios.delete(`${process.env.REACT_APP_DEVELOPMENT}/api/deletereceipt/${update._id}`,update)
       .then(response=>{
         console.log(response)
-        alldata()
-      })
+    
+        // setData(data.filter(item => item._id !== update._id));
+        // Remove the deleted document from the local data
+      const updatedData = data.filter(item => item._id !== update._id);
+      setData(updatedData);
+
+      // After deletion, update the count to reflect the correct next available document number
+      setCount(updatedData.length + 1);
+        // alldata()
+      window.location.reload();
+    })
+    // alldata()
       setAlert(false)
     } catch (error) {
       console.log(error)
     }
-    
+    // alldata()
   }
-  // ------------------------------------------Print api here -------------------------------------------------------------
-
-  // const handlePrintButtonClick = async ()=>{
- 
-   
-  //   try {
-  //     await axios.post(`${process.env.REACT_APP_DEVELOPMENT}/api/qgl`,formdate)
-  //     .then(response=>{
-  //     setData(response.data)
-  //     history.push('/Receiptpdf', { data: formdate });
-  //    })
-  //    } catch(error) {
-  //      console.log(error,"This is error")
-  //    }
-  // }
+  // useEffect(()=>{
+  //   deleteRow()
+  // },[])
 
   return (
     <div className="row">
@@ -251,6 +305,7 @@ useEffect(()=>{
           <div className="col ">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
+                  
                   name="date"
                     sx={{ width: 230 }}
                     label="Date"
@@ -258,6 +313,7 @@ useEffect(()=>{
                       onChange={(newValue) => {
                         setupdatedate(newValue);
                       }}
+                      
                     renderInput={(params) => (
                       <TextField name="date" {...params}      />
                     )}
@@ -317,7 +373,7 @@ useEffect(()=>{
               sx={{ width: 500 }}
               label="Cash"
               variant="outlined"
-              type="number"
+              // type="number"
               required
               name='cash'
               value={update.cash}
@@ -337,6 +393,24 @@ useEffect(()=>{
               value={update.being}
               onChange={updateData}
             />
+          </div>
+        </div>
+        <div className="row my-3 ">
+          <div className="col ">
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                  name="date"
+                    sx={{ width: 500 }}
+                    label="Date of Microchip implementation"
+                    value={updateMicrochip}
+                      onChange={(newValue) => {
+                        setupdateMicrochip(newValue);
+                      }}
+                    renderInput={(params) => (
+                      <TextField name="date" {...params}      />
+                    )}
+                  />
+                </LocalizationProvider>
           </div>
         </div>
      
@@ -371,9 +445,12 @@ useEffect(()=>{
             <TextField
               id="outlined-basic"
               sx={{ width: 230 }}
-              label="Doc No"
+             
+              value={count} 
+       
               variant="outlined"
               {...register('doc', { required: true })}
+      
               required
             />
           </div>
@@ -386,6 +463,7 @@ useEffect(()=>{
                     value={selectedDate}
                     onChange={(newValue) => {
                       setSelectedDate(newValue)}}
+                      required
                     renderInput={(params) => (
                       <TextField name="date" {...params}      />
                     )}
@@ -436,13 +514,15 @@ useEffect(()=>{
           </div>
         </div>
         <div className="row my-3 ">
-          <div className="col ">
+          <div className="col" >
             <TextField
               id="outlined-basic"
               sx={{ width: 500 }}
-              label="Cash"
+              value="ATM"
+              label="Payment Method"
               variant="outlined"
-              type="number"
+              // type="number"
+              
               required
               // {...register("cash")}
              
@@ -457,7 +537,7 @@ useEffect(()=>{
               sx={{ width: 500 }}
               label="Being for"
               variant="outlined"
-              type="number"
+              // type="number"
               required
               // {...register("being")}
             
@@ -465,13 +545,26 @@ useEffect(()=>{
             />
           </div>
         </div>
+        <div className="row my-3 ">
+          <div className="col ">
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+           
+                    sx={{ width: 500 }}
+                    label="Date of Microchip implementation"
+                    value={microchip}
+                    onChange={(newValue) => {
+                      setMicrochip(newValue)}}
+                    renderInput={(params) => (
+                      <TextField name="date" {...params}      />
+                    )}
+                  />
+                </LocalizationProvider>
+          </div>
+        </div>
         <Stack spacing={2} direction="row" marginBottom={2}  justifyContent="center">
-           <Button variant="contained" type="submit" color="success" disabled={isSubmitting} > <SaveIcon className="mr-1"/> Save Form</Button>
-          <Button type="submit"  variant="contained" 
-          // onClick={()=>{
-          //   handlePrintButtonClick()
-          // }}
-          ><PrintIcon className="mr-1" /> Print Form</Button> 
+           <Button variant="contained" color="success"   onClick={handleSaveButtonClick}  > <SaveIcon className="mr-1"/> Save Form</Button>
+          <Button  variant="contained"  onClick={handlePrintButtonClick}><PrintIcon className="mr-1" /> Print Form</Button> 
            </Stack>
         </form>
 </div>

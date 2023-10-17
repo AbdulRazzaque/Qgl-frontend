@@ -41,8 +41,12 @@ React.useEffect(()=>{
 </div>
   </div>
   <div class="col-4">
-  {/* <h3 className='key'> Date: <span className='value'>{moment.parseZone(locationData.date).local().format("DD/MM/YYYY")}</span> </h3>  */}
-  <h3 className='key'> Date: <span className='value'> {moment(locationData.date).format("DD/MM/YYYY")}</span> </h3> 
+  <h3 className='key'>Date: <span className='value'>{new Date(locationData.date).toLocaleDateString('en-US')}</span>
+
+</h3> 
+
+
+
   </div>
 </div>
 
@@ -82,7 +86,7 @@ React.useEffect(()=>{
   </div>
 
    <div class="col-3 my-2  ">
-  <h3 className='key'>Cash</h3> 
+  <h3 className='key'>Payment Method</h3> 
   </div>
    <div class="col-4 my-2  dark-border border-top-0 border-left-0 border-right-0">
  
@@ -99,8 +103,20 @@ React.useEffect(()=>{
  
     <span className='value'>{locationData.being}</span> 
   </div>
+
    <div class="col-5 my-2 ">
   <h3 className='key'>ذالك عن</h3> 
+  </div>
+   <div class="col-3 my-2  ">
+  <h3 className='key'>Microchip implementation</h3> 
+  </div>
+   <div class="col-4 my-2   dark-border border-top-0 border-left-0 border-right-0">
+ 
+    <span className='value'>{new Date(locationData.microchip).toLocaleDateString('en-US')}</span> 
+  </div>
+
+   <div class="col-5 my-2 ">
+  <h3 className='key'>تاريخ الترصيص</h3> 
   </div>
   
 

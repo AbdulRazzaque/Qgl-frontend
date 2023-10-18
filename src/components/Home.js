@@ -31,16 +31,18 @@ function Home() {
   const [updateMicrochip, setupdateMicrochip] = React.useState(dayjs());
 
   const [microchip,setMicrochip] = useState([])
+  const [printData,setprintData] = useState([])
+
   const [count, setCount] = useState();
   const history = useHistory();
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'doc', headerName: 'Doc', width: 130 },
+    { field: 'id', headerName: 'ID', width: 50 },
+    { field: 'doc', headerName: 'Doc', width: 50 },
     // { field: 'date', headerName: 'Date', width: 130 },
-    {headerName: "Date",field: "date",width: 150,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
-    { field: 'name', headerName: 'Name', width: 130 },
-    { field: 'amount', headerName: 'Amount', width: 130 },
+    {headerName: "Date",field: "date",width: 130,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
+    { field: 'name', headerName: 'Name', width: 150 },
+    { field: 'amount', headerName: 'Amount', width: 100 },
     { field: 'membership', headerName: 'Membership', width: 130 },
     { field: 'cash', headerName: 'Payment Method', width: 130 },
     { field: 'being', headerName: 'Being', width: 130 },
@@ -66,6 +68,18 @@ function Home() {
         <Fragment>
           <Button color="error" onClick={() => setAlert(true)}>
             <DeleteIcon />
+          </Button>
+        </Fragment>
+      ),
+    },
+    {
+      title: "Print",
+      field: "Print",
+      width: 100,
+      renderCell: (params) => (
+        <Fragment>
+          <Button color="success" onClick={()=>clickPrintIcon(params.row)}>
+            <PrintIcon />
           </Button>
         </Fragment>
       ),
@@ -212,23 +226,28 @@ useEffect(()=>{
         // setData(data.filter(item => item._id !== update._id));
         // Remove the deleted document from the local data
       const updatedData = data.filter(item => item._id !== update._id);
-      setData(updatedData);
+      // setData(updatedData);
 
       // After deletion, update the count to reflect the correct next available document number
-      setCount(updatedData.length + 1);
-        // alldata()
+      // setCount(updatedData.length + 1);
+
       window.location.reload();
     })
-    // alldata()
+
       setAlert(false)
     } catch (error) {
       console.log(error)
     }
     // alldata()
   }
-  // useEffect(()=>{
-  //   deleteRow()
-  // },[])
+ 
+
+
+  const clickPrintIcon=(row)=>{
+    // setprintData(row)
+    history.push('/Receiptpdf', { data:row });
+    console.log(row,"After clicking clickpritn icon")
+  }
 
   return (
     <div className="row">

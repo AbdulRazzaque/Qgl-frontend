@@ -18,6 +18,7 @@ import moment from "moment";
 import dayjs from "dayjs";
 import date from "date-and-time";
 import Receiptpdf from "./Receiptpdf";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 function Previousreport() {
     const [display,setDisplay]=React.useState(false)
     const [data,setData] = React.useState([])
@@ -29,43 +30,56 @@ function Previousreport() {
     const [updatedate, setupdatedate] = React.useState(dayjs());
     const [updateMicrochip, setupdateMicrochip] = React.useState(dayjs()); 
   const [microchip,setMicrochip] = useState([])
-    const columns = [
-      { field: 'id', headerName: 'ID', width: 70 },
-      { field: 'doc', headerName: 'Doc', width: 130 },
-      // { field: 'date', headerName: 'Date', width: 130 },
-      {headerName: "Date",field: "date",width: 150,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
-      { field: 'name', headerName: 'Name', width: 130 },
-      { field: 'amount', headerName: 'Amount', width: 130 },
-      { field: 'membership', headerName: 'Membership', width: 130 },
-      { field: 'cash', headerName: 'Payment Method', width: 130 },
-      { field: 'being', headerName: 'Being', width: 130 },
-      {headerName: "Microchip ",field: "microchip",width: 150,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
-  
-          {
-        title: "Action",
-        field: "Action",
-        width: 100,
-        renderCell: () => (
-          <Fragment>
-            <Button onClick={() => setShowDialog(true)}>
-              <EditIcon />
-            </Button>
-          </Fragment>
-        ),
-      },
-      {
-        title: "Delete",
-        field: "Delete",
-        width: 100,
-        renderCell: () => (
-          <Fragment>
-            <Button color="error" onClick={() => setAlert(true)}>
-              <DeleteIcon />
-            </Button>
-          </Fragment>
-        ),
-      },
-    ];
+  const history = useHistory();
+  const columns = [
+    { field: 'id', headerName: 'ID', width: 50 },
+    { field: 'doc', headerName: 'Doc', width: 50 },
+    // { field: 'date', headerName: 'Date', width: 130 },
+    {headerName: "Date",field: "date",width: 130,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
+    { field: 'name', headerName: 'Name', width: 150 },
+    { field: 'amount', headerName: 'Amount', width: 100 },
+    { field: 'membership', headerName: 'Membership', width: 130 },
+    { field: 'cash', headerName: 'Payment Method', width: 130 },
+    { field: 'being', headerName: 'Being', width: 130 },
+    {headerName: "Microchip ",field: "microchip",width: 150,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
+
+        {
+      title: "Action",
+      field: "Action",
+      width: 100,
+      renderCell: () => (
+        <Fragment>
+          <Button onClick={() => setShowDialog(true)}>
+            <EditIcon />
+          </Button>
+        </Fragment>
+      ),
+    },
+    {
+      title: "Delete",
+      field: "Delete",
+      width: 100,
+      renderCell: () => (
+        <Fragment>
+          <Button color="error" onClick={() => setAlert(true)}>
+            <DeleteIcon />
+          </Button>
+        </Fragment>
+      ),
+    },
+    {
+      title: "Print",
+      field: "Print",
+      width: 100,
+      renderCell: (params) => (
+        <Fragment>
+          <Button color="success" onClick={()=>clickPrintIcon(params.row)}>
+            <PrintIcon />
+          </Button>
+        </Fragment>
+      ),
+    },
+  ];
   // ------------------------------------------update api here -------------------------------------------------------------
 
   const updateData = (e)=>{
@@ -132,6 +146,14 @@ useEffect(()=>{
       console.log(error)
     }
     
+  }
+
+  // ------------------------------------------Print code here -------------------------------------------------------------
+
+  const clickPrintIcon=(row)=>{
+    // setprintData(row)
+    history.push('/Receiptpdf', { data:row });
+    console.log(row,"After clicking clickpritn icon")
   }
 
     return (

@@ -95,7 +95,7 @@ React.useEffect(()=>{
    <div class="col-5 my-2 ">
   <h3 className='key'>نقدا</h3> 
   </div>
-
+ 
    <div class="col-3 my-2  ">
   <h3 className='key'>Being for</h3> 
   </div>
@@ -108,7 +108,7 @@ React.useEffect(()=>{
   <h3 className='key'>ذالك عن</h3> 
   </div>
    <div class="col-3 my-2  ">
-  <h3 className='key'>Microchip implementation</h3> 
+  <h3 className='key'>Microchip Implementation</h3> 
   </div>
    <div class="col-4 my-2   dark-border border-top-0 border-left-0 border-right-0">
  
@@ -128,7 +128,7 @@ React.useEffect(()=>{
  
    <div class="col mt-2">
   <h3 className='key'>تو قيع المحاسب</h3> 
-  <h3 className='key mt-2'> Receiver Sign</h3> 
+  <h3 className='key mt-2'> Accountant Sign</h3> 
   </div>
   
 </div>

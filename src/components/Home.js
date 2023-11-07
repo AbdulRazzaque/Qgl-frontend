@@ -527,7 +527,6 @@ useEffect(()=>{
               type="number"
               required
               // {...register("membership")}
-             
               {...register('membership', { required: true })}
             />
           </div>
@@ -540,8 +539,7 @@ useEffect(()=>{
               value="ATM"
               label="Payment Method"
               variant="outlined"
-              // type="number"
-              
+              // type="number"      
               required
               // {...register("cash")}
              

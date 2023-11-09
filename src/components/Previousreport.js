@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Dashhead from "./Dashhead";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Autocomplete, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Stack, TextField } from "@mui/material";
+import { Autocomplete, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Pagination, Stack, TextField } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import SaveIcon from '@mui/icons-material/Save';
 import PrintIcon from "@mui/icons-material/Print";
@@ -18,7 +18,10 @@ import moment from "moment";
 import dayjs from "dayjs";
 import date from "date-and-time";
 import Receiptpdf from "./Receiptpdf";
+import MaterialTable, { MTableToolbar } from "material-table";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import idLocale from 'date-fns/locale/id';
+
 function Previousreport() {
     const [display,setDisplay]=React.useState(false)
     const [data,setData] = React.useState([])
@@ -30,55 +33,142 @@ function Previousreport() {
     const [updatedate, setupdatedate] = React.useState(dayjs());
     const [updateMicrochip, setupdateMicrochip] = React.useState(dayjs()); 
   const [microchip,setMicrochip] = useState([])
-  const history = useHistory();
-  const columns = [
-    { field: 'id', headerName: 'ID', width: 50 },
-    { field: 'doc', headerName: 'Doc', width: 50 },
-    // { field: 'date', headerName: 'Date', width: 130 },
-    {headerName: "Date",field: "date",width: 130,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
-    { field: 'name', headerName: 'Name', width: 150 },
-    { field: 'amount', headerName: 'Amount', width: 100 },
-    { field: 'membership', headerName: 'Membership', width: 130 },
-    { field: 'cash', headerName: 'Payment Method', width: 130 },
-    { field: 'being', headerName: 'Being', width: 130 },
-    {headerName: "Microchip ",field: "microchip",width: 150,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
 
-        {
-      title: "Action",
-      field: "Action",
-      width: 100,
-      renderCell: () => (
-        <Fragment>
-          <Button onClick={() => setShowDialog(true)}>
-            <EditIcon />
-          </Button>
-        </Fragment>
+
+  const history = useHistory();
+  // const columns = [
+  //   { field: 'id', title: 'ID', width: 50 },
+  //   { field: 'doc', title: 'Doc', width: 50 },
+  //   // { field: 'date', title: 'Date', width: 130 },
+  //   {title: "Date",field: "date",width: 130,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
+  //   { field: 'name', title: 'Name', width: 150 },
+  //   { field: 'amount', title: 'Amount', width: 100 },
+  //   { field: 'membership', title: 'Membership', width: 130 },
+  //   { field: 'cash', title: 'Payment Method', width: 130 },
+  //   { field: 'being', title: 'Being', width: 130 },
+  //   {title: "Microchip ",field: "microchip",width: 150,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
+
+  //       {
+  //     title: "Action",
+  //     field: "Action",
+  //     width: 100,
+  //     renderCell: () => (
+  //       <Fragment>
+  //         <Button onClick={() => setShowDialog(true)}>
+  //           <EditIcon />
+  //         </Button>
+  //       </Fragment>
+  //     ),
+  //   },
+  //   {
+  //     title: "Delete",
+  //     field: "Delete",
+  //     width: 100,
+  //     renderCell: () => (
+  //       <Fragment>
+  //         <Button color="error" onClick={() => setAlert(true)}>
+  //           <DeleteIcon />
+  //         </Button>
+  //       </Fragment>
+  //     ),
+  //   },
+  //   {
+  //     title: "Print",
+  //     field: "Print",
+  //     width: 100,
+  //     renderCell: (params) => (
+  //       <Fragment>
+  //         <Button color="success" onClick={()=>clickPrintIcon(params.row)}>
+  //           <PrintIcon />
+  //         </Button>
+  //       </Fragment>
+  //     ),
+  //   },
+  // ];
+  const columns = [
+    { field: 'id', title: 'ID', width: 50 },
+    { field: 'doc', title: 'Doc', width: 50 },
+    // { field: 'date', title: 'Date', width: 130 },
+    {field: "date",title: "Date",width: 130, type:'date',render:(rowData)=>moment(rowData.date).format("MM/DD/YYYY")},
+    { field: 'name', title: 'Name', width: 130 },
+    { field: 'amount', title: 'Amount', width: 100 },
+    { field: 'membership', title: 'Membership', width: 100 },
+    { field: 'cash', title: 'Payment Method', width: 100 },
+    { field: 'being', title: 'Being', width: 100 },
+    // {title: "Microchip ",field: "microchip",width: 150,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
+    {field: "microchip",title: "Microchip", type:'date',width: 150,render:(rowData)=>moment(rowData.microchip).format("MM/DD/YYYY")},
+    {
+      title: 'Actions',
+      field: 'actions',
+       width: 90,
+      render: () => (
+        <IconButton
+        onClick={() => setShowDialog(true)} // Add your click handler for the icon action
+        >
+          <EditIcon /> {/* Display the icon */}
+        </IconButton>
       ),
     },
     {
-      title: "Delete",
-      field: "Delete",
-      width: 100,
-      renderCell: () => (
-        <Fragment>
-          <Button color="error" onClick={() => setAlert(true)}>
-            <DeleteIcon />
-          </Button>
-        </Fragment>
+      title: 'Actions',
+      field: 'actions',
+      width: 90,
+      render: (rowData) => (
+        <IconButton
+        onClick={() => setAlert(true)} // Add your click handler for the icon action
+        >
+          <DeleteIcon /> {/* Display the icon */}
+        </IconButton>
       ),
     },
     {
-      title: "Print",
-      field: "Print",
-      width: 100,
-      renderCell: (params) => (
-        <Fragment>
-          <Button color="success" onClick={()=>clickPrintIcon(params.row)}>
-            <PrintIcon />
-          </Button>
-        </Fragment>
+      title: 'Actions',
+      field: 'actions',
+      width: 90,
+      render: (rowData) => (
+        <IconButton
+        onClick={() =>clickPrintIcon(rowData)} // Add your click handler for the icon action
+        >
+        <PrintIcon /> {/* Display the icon */}
+        </IconButton>
       ),
     },
+    //     {
+    //   title: "Action",
+    //   field: "Action",
+    //   width: 100,
+    //   renderCell: () => (
+    //     <Fragment>
+    //       <Button onClick={() => setShowDialog(true)}>
+    //         <EditIcon />
+    //       </Button>
+    //     </Fragment>
+    //   ),
+    // },
+    // {
+    //   title: "Delete",
+    //   field: "Delete",
+    //   width: 100,
+    //   renderCell: () => (
+    //     <Fragment>
+    //       <Button color="error" onClick={() => setAlert(true)}>
+    //         <DeleteIcon />
+    //       </Button>
+    //     </Fragment>
+    //   ),
+    // },
+    // {
+    //   title: "Print",
+    //   field: "Print",
+    //   width: 100,
+    //   renderCell: (params) => (
+    //     <Fragment>
+    //       <Button color="success" onClick={()=>clickPrintIcon(params.row)}>
+    //         <PrintIcon />
+    //       </Button>
+    //     </Fragment>
+    //   ),
+    // },
   ];
   // ------------------------------------------update api here -------------------------------------------------------------
 
@@ -156,6 +246,11 @@ useEffect(()=>{
     console.log(row,"After clicking clickpritn icon")
   }
 
+  // ------------------------------------------Row Data get  code here -------------------------------------------------------------
+
+const handleRowClick=(event,rowData)=>{
+  setUpdate(rowData)
+}
     return (
         <div className="row">
             <div className="col-xs-12 col-sm-12 col-md-2 col-lg-2 col-xl-2">
@@ -173,7 +268,7 @@ useEffect(()=>{
                 <div style={{ height: 400, width: '100%' }}>
 
                 <Container>
-        {alert && (
+        {/* {alert && (
           <Dialog open={alert} style={{ height: 600 }}>
             <DialogTitle>Delete Row</DialogTitle>
             <DialogContent>
@@ -196,36 +291,224 @@ useEffect(()=>{
               </Button>
             </DialogActions>
           </Dialog>
-        )}
+        )} */}
+{alert && (
+  <div class="modal" style={{ display: alert ? "block" : "none" }}>
+    <div class="modal-dialog" style={{ height: 600 }}>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete Row</h5>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete this?</p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-primary"
+            onClick={() => deleteRow(update)}
+          >
+            Yes
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-dismiss="modal"
+            onClick={() => setAlert(false)}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
         {/* This Dialog box is update  */}
         {update && (
-          <Dialog open={showDialog} style={{ height: 600 }}>
-            <DialogTitle>Update Data</DialogTitle>
-            <DialogContent>
-            <form>
+      //     <Dialog open={showDialog} style={{ height: 600 }}>
+      //       <DialogTitle>Update Data</DialogTitle>
+      //       <DialogContent>
+      //       <form>
 
    
-      <div className="row ">
+      // <div className="row ">
 
-        </div>
-        <div className="row  ">
-          <div className="col ">
-            <TextField
-              id="outlined-basic"
-              sx={{ width: 230 }}
-              label="Doc No"
-              variant="outlined"
+      //   </div>
+      //   <div className="row  ">
+      //     <div className="col ">
+      //       <TextField
+      //         id="outlined-basic"
+      //         sx={{ width: 230,}}
+      //         label="Doc No"
+      //         variant="outlined"
+      //         name="doc"
+      //         value={update.doc}
+      //         onChange={updateData}
+      //         required
+      //       />
+
+      //     </div>
+      //     <div className="col ">
+      //     <LocalizationProvider dateAdapter={AdapterDayjs}>
+      //             <DatePicker
+      //             name="date"
+      //             // Adjust the padding value as needed
+      //               sx={{ width: 230 }}
+      //               label="Date"
+      //               value={updatedate}
+      //                 onChange={(newValue) => {
+      //                   setupdatedate(newValue);
+      //                 }}
+      //               renderInput={(params) => (
+      //                 <TextField name="date" {...params}      />
+      //               )}
+      //             />
+      //           </LocalizationProvider>
+      //     </div>
+      //   </div>
+      //   <div className="row my-3 ">
+      //     <div className="col ">
+      //       <TextField
+      //         id="outlined-basic" 
+      //         sx={{ width: 500, padding: '16px'}}
+      //         label="Received From Mr/Mrs"
+      //         variant="outlined"
+      //         name="name"
+      //         value={update.name}
+      //         onChange={updateData}
+      //         required
+              
+      //       />
+      //     </div>
+      //   </div>
+      //   <div className="row my-3 ">
+      //     <div className="col ">
+      //       <TextField
+      //         id="outlined-basic"
+      //         sx={{ width: 500 }}
+      //         label="The Amount Piad"
+      //         variant="outlined"
+      //         type="number"
+      //         required
+      //         name='amount'
+      //         value={update.amount}
+      //         onChange={updateData}
+      //       />
+      //     </div>
+      //   </div>
+      //   <div className="row my-3 ">
+      //     <div className="col ">
+      //       <TextField
+      //         id="outlined-basic"
+      //         sx={{ width: 500 }}
+      //         label="Membership No"
+      //         variant="outlined"
+      //         type="number"
+      //         required
+      //         name='membership'
+      //         value={update.membership}
+      //         onChange={updateData}
+      //       />
+      //     </div>
+      //   </div>
+      //   <div className="row my-3 ">
+      //     <div className="col ">
+      //       <TextField
+      //         id="outlined-basic"
+      //         sx={{ width: 500 }}
+      //         label="Cash"
+      //         variant="outlined"
+      //         // type="number"
+      //         required
+      //         name='cash'
+      //         value={update.cash}
+      //         onChange={updateData}
+      //       />
+      //     </div>
+      //   </div>
+      //   <div className="row my-3 ">
+      //     <div className="col ">
+      //       <TextField
+      //         id="outlined-basic"
+      //         sx={{ width: 500 }}
+      //         label="Being for"
+      //         variant="outlined"
+      //         type="number"
+      //         name='being'
+      //         value={update.being}
+      //         onChange={updateData}
+      //       />
+      //     </div>
+      //   </div>
+      //   <div className="row my-3 ">
+      //     <div className="col ">
+      //     <LocalizationProvider dateAdapter={AdapterDayjs}>
+      //             <DatePicker
+      //             name="date"
+      //               sx={{ width: 500 }}
+      //               label="Date of Microchip implementation"
+      //               value={updateMicrochip}
+      //                 onChange={(newValue) => {
+      //                   setupdateMicrochip(newValue);
+      //                 }}
+      //               renderInput={(params) => (
+      //                 <TextField name="date" {...params}      />
+      //               )}
+      //             />
+      //           </LocalizationProvider>
+      //     </div>
+      //   </div>
+      //   </form>
+      //       </DialogContent>
+      //       <DialogActions>
+      //         {/* <Button type="submit" variant="contained" onClick={updateRow}>
+      //           Update
+      //         </Button> */}
+      //         <button type="submit" class="btn btn-primary" onClick={updateRow}>Update</button>
+      //         <button type="submit" class="btn btn-danger"  onClick={() => {
+      //             setShowDialog(false);
+      //           }}>Cancel</button>
+  
+      //       </DialogActions>
+      //     </Dialog>
+      <Dialog open={showDialog} style={{ height: 600 }}>
+  <DialogTitle>Update Data</DialogTitle>
+  <DialogContent>
+    <form>
+      <div className="row">
+        <div className="col-6">
+          <div className="mb-3">
+            <label for="doc" class="form-label">Doc No</label>
+            <input
+              type="text"
+              class="form-control"
+              id="doc"
               name="doc"
               value={update.doc}
               onChange={updateData}
               required
             />
           </div>
-          <div className="col ">
+        </div>
+        <div className="col-6 mt-4">
+          {/* <div class="mb-3">
+            <label for="date" class="form-label">Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="date"
+              name="date"
+              value={updatedate}
+              onChange={(e) => {
+                setupdatedate(e.target.value);
+              }}
+            />
+          </div> */}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                   name="date"
+                  // Adjust the padding value as needed
                     sx={{ width: 230 }}
                     label="Date"
                     value={updatedate}
@@ -237,85 +520,99 @@ useEffect(()=>{
                     )}
                   />
                 </LocalizationProvider>
-          </div>
         </div>
-        <div className="row my-3 ">
-          <div className="col ">
-            <TextField
-              id="outlined-basic"
-              sx={{ width: 500 }}
-              label="Received From Mr/Mrs"
-              variant="outlined"
+
+        <div class="col-12">
+          <div class="mb-3">
+            <label for="name" class="form-label">Received From Mr/Mrs</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
               name="name"
               value={update.name}
               onChange={updateData}
               required
-              
             />
           </div>
         </div>
-        <div className="row my-3 ">
-          <div className="col ">
-            <TextField
-              id="outlined-basic"
-              sx={{ width: 500 }}
-              label="The Amount Piad"
-              variant="outlined"
+
+        <div class="col-12">
+          <div class="mb-3">
+            <label for="amount" class="form-label">The Amount Paid</label>
+            <input
               type="number"
-              required
-              name='amount'
+              class="form-control"
+              id="amount"
+              name="amount"
               value={update.amount}
               onChange={updateData}
+              required
             />
           </div>
         </div>
-        <div className="row my-3 ">
-          <div className="col ">
-            <TextField
-              id="outlined-basic"
-              sx={{ width: 500 }}
-              label="Membership No"
-              variant="outlined"
+
+        <div class="col-12">
+          <div class="mb-3">
+            <label for="membership" class="form-label">Membership No</label>
+            <input
               type="number"
-              required
-              name='membership'
+              class="form-control"
+              id="membership"
+              name="membership"
               value={update.membership}
               onChange={updateData}
+              required
             />
           </div>
         </div>
-        <div className="row my-3 ">
-          <div className="col ">
-            <TextField
-              id="outlined-basic"
-              sx={{ width: 500 }}
-              label="Cash"
-              variant="outlined"
-              // type="number"
-              required
-              name='cash'
+
+        <div class="col-12">
+          <div class="mb-3">
+            <label for="cash" class="form-label">Cash</label>
+            <input
+              type="text"
+              class="form-control"
+              id="cash"
+              name="cash"
               value={update.cash}
               onChange={updateData}
+              required
             />
           </div>
         </div>
-        <div className="row my-3 ">
-          <div className="col ">
-            <TextField
-              id="outlined-basic"
-              sx={{ width: 500 }}
-              label="Being for"
-              variant="outlined"
-              type="number"
-              name='being'
+
+        <div class="col-12">
+          <div class="mb-3">
+            <label for="being" class="form-label">Being for</label>
+            <input
+              type="text"
+              class="form-control"
+              id="being"
+              name="being"
               value={update.being}
               onChange={updateData}
             />
           </div>
         </div>
-        <div className="row my-3 ">
-          <div className="col ">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
+
+        <div class="col-12">
+          {/* <div class="mb-3">
+            <label for="microchip" class="form-label">Date of Microchip Implementation</label>
+            <input
+              type="date"
+              class="form-control"
+              id="microchip"
+              name="microchip"
+              // value={updateMicrochip}
+              value={update.microchip}
+              onChange={updateData}
+              // onChange={(e) => {
+              //   setupdateMicrochip(e.target.value);
+              // }}
+            />
+          </div> */}
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                   name="date"
                     sx={{ width: 500 }}
@@ -329,44 +626,51 @@ useEffect(()=>{
                     )}
                   />
                 </LocalizationProvider>
-          </div>
         </div>
-        </form>
-            </DialogContent>
-            <DialogActions>
-              <Button type="submit" variant="contained" onClick={updateRow}>
-                Update
-              </Button>
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={() => {
-                  setShowDialog(false);
-                }}
-              >
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog>
+      </div>
+    </form>
+  </DialogContent>
+  <DialogActions>
+    <button type="button" class="btn btn-primary" onClick={updateRow}>Update</button>
+    <button type="button" class="btn btn-danger" onClick={() => setShowDialog(false)}>Cancel</button>
+  </DialogActions>
+</Dialog>
+
         )}
 
 </Container>
-<div style={{ height: 1000, width: '100%' }}>
-      <DataGrid
-        rows={data}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
-          },
-        }}
-        pageSizeOptions={[5, 10]}
-        // checkboxSelection
-        // getRowId={(row)=>row._id}
-        onRowClick={(item)=>setUpdate(item.row)}
 
-      />
-      </div>
+        <MaterialTable
+      title="Overriding Export Function Preview"
+      columns={columns}
+      data={data}       
+     onRowClick={(event,rowData)=>handleRowClick(event,rowData)}
+      options={{
+        headerStyle: {
+          fontWeight: 'bold',
+        },
+        exportButton: true,
+        paging: false, // Disable pagination
+        search: true,
+        filtering:true
+      }}
+      // components={{
+      //   Toolbar:(props)=>(
+      //     <div>
+      //       <MTableToolbar {...props}/>
+      //       <DatePicker
+      //       label="Search By Date"
+      //       value={props.date}
+      //       onChange={(date)=>{
+      //         props.onDateFilterChanged(date);
+      //       }}
+      //       />
+      //     </div>
+      //   )
+      // }}
+   
+
+    />
     </div>
 
 

@@ -31,7 +31,7 @@ function Home() {
   const [updateMicrochip, setupdateMicrochip] = React.useState(dayjs());
 
   const [microchip,setMicrochip] = useState([])
-  const [printData,setprintData] = useState([])
+
 
   const [count, setCount] = useState();
   const history = useHistory();
@@ -418,7 +418,7 @@ useEffect(()=>{
           <div className="col ">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
-                  name="date"
+                  name="microchip"
                     sx={{ width: 500 }}
                     label="Date of Microchip implementation"
                     value={updateMicrochip}

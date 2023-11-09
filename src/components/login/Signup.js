@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { CssBaseline, Container, Box, TextField, Typography, Button, Paper, Alert, AlertTitle, IconButton } from '@mui/material';
 import { AccountCircle, Lock } from '@mui/icons-material'; // Import icons
-import logo from '../../images/logo.jpg';
+import logo from '../../images/logo.png';
 import axios from 'axios';
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useForm } from 'react-hook-form';
-
+import './signup.scss'
 import InputAdornment from '@mui/material/InputAdornment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-
+ 
 const useStyles = {
   container: {
     display: 'flex',
@@ -29,13 +29,27 @@ const useStyles = {
     boxShadow: '0 5px 15px rgba(0, 0, 0, 0.3)',
   },
   logo: {
-    width: '150px',
-    marginTop: '20px',
+    width: '121px',
+    marginLeft: '260px',
+    marginTop: '-28px',
+
   },
   title: {
     fontSize: '2rem',
     fontWeight: 'bold',
-    margin: '20px 0',
+    // margin: '20px 0',
+  },
+  portal: {
+
+    fontSize: '36px',
+    fontWeight: 'bold',
+    color: '#111315', /* Change the text color */
+    textShadow:' 2px 2px 4px rgba(0, 0, 0, 0.5)', /* Add a subtle shadow */
+    borderRadius: '10px', /* Rounded corners */
+      position: 'relative',
+    right: '65px',
+    bottom: '65px',
+    bottom: '65px',
   },
   customButton: {
     background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
@@ -113,8 +127,11 @@ const Signup = () => {
       <Container component="main" maxWidth="xs">
         <Paper elevation={3} style={useStyles.formContainer}>
           <img src={logo} alt="Logo" style={useStyles.logo} />
+          <Typography component="h1" variant="h4" style={useStyles.portal}>
+          Payment Portal
+          </Typography>
           <Typography component="h1" variant="h4" style={useStyles.title}>
-            Welcome Back
+          مرحباً
           </Typography>
           <form style={useStyles.form} onSubmit={handleSubmit(onSubmit)}>
             <TextField

@@ -26,7 +26,7 @@ const Dashhead = (props) => {
           </p>
         </div>
       ) : (
-        <div className="menu-container" onClick={() => props.history.push("/")}>
+        <div className="menu-container" onClick={() => props.history.push("/Home")}>
           <p>
             <PersonOutlineOutlinedIcon /> Employees
           </p>

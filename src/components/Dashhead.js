@@ -11,6 +11,8 @@ import LocalAtmIcon from "@mui/icons-material/LocalAtm";
 import PersonIcon from "@mui/icons-material/Person";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import { connect } from "react-redux";
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
+import CardMembershipIcon from '@mui/icons-material/CardMembership';
 import InfoIcon from "@mui/icons-material/Info";
 const Dashhead = (props) => {
   console.log(props);
@@ -22,18 +24,36 @@ const Dashhead = (props) => {
       {id === 1 ? (
         <div className="menu-container-active">
           <p onClick={() => props.history.push("/")}>
-            <PersonIcon /> Employees
+            <ControlPointIcon /> Entry Mode
           </p>
         </div>
       ) : (
         <div className="menu-container" onClick={() => props.history.push("/Home")}>
           <p>
-            <PersonOutlineOutlinedIcon /> Employees
+            <ControlPointIcon /> Entry Mode
           </p>
         </div>
       )}
 
-      {id === 2 ? (
+     
+      {id === 3 ? (
+        <div className="menu-container-active">
+          <p onClick={() => props.history.push("Membership")}>
+            <CardMembershipIcon /> MemberShip Form
+          </p>
+        </div>
+      ) : (
+        <div
+          className="menu-container"
+          onClick={() => props.history.push("Membership")}
+        >
+          <p>
+            <CardMembershipIcon />  MemberShip Form
+          </p>
+        </div>
+      )}
+
+{id === 2 ? (
         <div className="menu-container-active">
           <p onClick={() => props.history.push("Previousreport")}>
             <NoteAddIcon /> Previous Details
@@ -49,6 +69,7 @@ const Dashhead = (props) => {
           </p>
         </div>
       )}
+
     </div>
   );
 };

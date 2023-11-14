@@ -103,7 +103,7 @@ function Home() {
         // setCount(count + 1);
         setCount((prevCount) => prevCount + 1);
         console.log('Data saved successfully');
-     
+        reset();
        } catch(error) {
          console.log(error,"This is error")
        }
@@ -121,6 +121,7 @@ function Home() {
         .then(response=>{
           // setCount((prevCount) => prevCount + 1);
           history.push('/Receiptpdf', { data:combinedObj });
+          reset();
        })
        } catch(error) {
          console.log(error,"This is error")
@@ -128,7 +129,7 @@ function Home() {
     }
      
     alldata();
-    reset();
+
     }
    
     

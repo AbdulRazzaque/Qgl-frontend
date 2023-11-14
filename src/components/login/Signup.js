@@ -9,7 +9,8 @@ import './signup.scss'
 import InputAdornment from '@mui/material/InputAdornment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
- 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const useStyles = {
   container: {
     display: 'flex',
@@ -67,21 +68,14 @@ const useStyles = {
   link: {
     marginTop: '10px',
   },
-  alert:{
-    width: '526px',
-    height: '67px',
-    marginBottom:' 13px',
-    border: '1px',
-    border:'solid',
-    borderRadius: '52px'
-  }
+
  
 };
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
 
 
-  const [isValid,setIsValid] = useState(false)
+ 
   const history = useHistory();
   const url = process.env.REACT_APP_DEVELOPMENT;
   const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTQ3NzdlNzEwZTA2OGZjODFjNDg1MjEiLCJpYXQiOjE2OTkzNTE4MjUsImV4cCI6MTczMDkwOTQyNX0.5VeraM1Lbr5Q5et-xTNYMi8JuAc05pAYuVKDahgL5YU"
@@ -95,10 +89,16 @@ const Signup = () => {
       console.log(response,'res')
       history.push('/Home');
     }).catch(error=>{
-      setIsValid(error.response.data.message)
-      setTimeout(()=>{
-        setIsValid(false)
-      },3000)
+      toast(error.response.data.message,{
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      })
     })
     } catch (error) {
       console.log(error)
@@ -115,13 +115,6 @@ const Signup = () => {
  
    
     <div style={useStyles.container}>
-    {
-        isValid && 
-        <Alert severity='error' style={useStyles.alert}>
-          <AlertTitle>Error</AlertTitle>
-        <span>  <strong>{isValid}</strong></span> 
-        </Alert>
-      }
    
       <CssBaseline />
       <Container component="main" maxWidth="xs">
@@ -185,6 +178,7 @@ const Signup = () => {
             >
               Login In
             </Button>
+            <ToastContainer />
           </form>
           {/* <Link href="#" color="primary" style={useStyles.link}>
             signUp

@@ -40,7 +40,7 @@ const Membership = () => {
    const allData=()=>{
     axios.get(`${url}/api/getmembers`)
     .then(response=>{
-        let arr = response.data.map((item,index)=>({
+         let arr = response.data.map((item,index)=>({
           ...item,
           id:index+1
         }))
@@ -143,7 +143,7 @@ const updateRow = async()=>{
   } catch (error) {
     console.log(error)
     
-  }
+  } 
   allData()
 }
 // =================================Delete api Here=================================================================

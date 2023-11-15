@@ -29,13 +29,15 @@ function Home() {
   const [showDialog, setShowDialog] = useState(false);
   const [updatedate, setupdatedate] = React.useState(dayjs());
   const [updateMicrochip, setupdateMicrochip] = React.useState(dayjs());
-
+  const [owner,setOwner]=useState([])
+  const [selectowner,setSelectedOwner]=useState([])
+  const [selectmemberno,setSelectedMemberNo]=useState(null)
   const [microchip,setMicrochip] = useState([])
 
 
   const [count, setCount] = useState();
   const history = useHistory();
-
+  const url=process.env.REACT_APP_DEVELOPMENT;
   const columns = [
     { field: 'id', headerName: 'ID', width: 50 },
     { field: 'doc', headerName: 'Doc', width: 50 },
@@ -94,6 +96,8 @@ function Home() {
     if(action === 'save'){
       var obj = {
         date: selectedDate,
+        membership:selectmemberno.membershipno,
+        name:selectmemberno.ownername,
         doc:count,
         microchip:microchip,
         ...data,
@@ -111,6 +115,8 @@ function Home() {
     else if(action === 'print'){
       var obj = {
         date: selectedDate,
+        membership:selectmemberno.membershipno,
+        name:selectmemberno.ownername,
         doc:count,
         microchip:microchip,
         ...data,
@@ -210,10 +216,7 @@ function Home() {
         }
       }
 
-useEffect(()=>{
-  alldata()
-  deleteRow()
-},[])
+
 // console.log(data,'here i am cheack the data')
 
 
@@ -243,13 +246,28 @@ useEffect(()=>{
   }
  
 
+  // ------------------------------------------Click print  api here -------------------------------------------------------------
 
   const clickPrintIcon=(row)=>{
     // setprintData(row)
     history.push('/Receiptpdf', { data:row });
     console.log(row,"After clicking clickpritn icon")
   }
+  // ------------------------------------------Membership owner code  api here -------------------------------------------------------------
 
+  const getOwnerName=async()=>{
+    axios.get(`${url}/api/getmembers`)
+    .then(response=>{
+      setOwner(response.data)
+    })
+  }
+  useEffect(()=>{
+    alldata()
+    deleteRow()
+    getOwnerName()
+  },[])
+
+  
   return (
     <div className="row">
       <div className="col-xs-12 col-sm-12 col-md-2 col-lg-2 col-xl-2">
@@ -493,15 +511,42 @@ useEffect(()=>{
         </div>
         <div className="row my-3 ">
           <div className="col ">
-            <TextField
-              id="outlined-basic"
-              sx={{ width: 500 }}
-              label="Received From Mr/Mrs"
-              variant="outlined"
-              // {...register("name")}
-              required
-              {...register('name', { required: true })}
-            />
+       
+             <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  // value={supplierId}
+                  onChange={(event, newValue) => {
+                    setSelectedMemberNo(newValue);
+                  }}
+                  getOptionLabel={(ownerName) =>` ${ownerName.membershipno} ${ownerName.ownername}`}
+                  options={owner}
+                  sx={{ width: 500 }}
+                  //  {...register("suplier", { required: true, maxLength: 20 })}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Select Membership No" />
+                  )}
+                />
+          </div>
+        </div>
+        <div className="row my-3 ">
+          <div className="col ">          
+             <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  // value={supplierId}
+                  // onChange={(event, newValue) => {
+                  //   setSelectedOwner(newValue);
+                  // }}
+                  disabled
+                  getOptionLabel={(ownerName) =>`${ownerName.ownername}`}
+                  value={selectmemberno?selectmemberno:{ownername:""}}
+                  options={owner}
+                  sx={{ width: 500 }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Owner Name" />
+                  )}
+                />
           </div>
         </div>
         <div className="row my-3 ">
@@ -519,28 +564,13 @@ useEffect(()=>{
           </div>
         </div>
         <div className="row my-3 ">
-          <div className="col ">
-            <TextField
-              id="outlined-basic"
-              sx={{ width: 500 }}
-              label="Membership No"
-              variant="outlined"
-              type="number"
-              required
-              // {...register("membership")}
-              {...register('membership', { required: true })}
-            />
-          </div>
-        </div>
-        <div className="row my-3 ">
           <div className="col" >
             <TextField
               id="outlined-basic"
               sx={{ width: 500 }}
               value="ATM"
               label="Payment Method"
-              variant="outlined"
-              // type="number"      
+              variant="outlined"     
               required
               // {...register("cash")}
              
@@ -596,8 +626,6 @@ useEffect(()=>{
           },
         }}
         pageSizeOptions={[5, 10]}
-        // checkboxSelection
-        // getRowId={(row)=>row._id}
         onRowClick={(item)=>setUpdate(item.row)}
 
       />

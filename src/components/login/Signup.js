@@ -135,7 +135,7 @@ const Signup = () => {
               id="name"
               label="Name"
               name="name"
-              autoComplete="name"
+              autoComplete="off"
               autoFocus
               {...register("name")}
               InputProps={{
@@ -155,7 +155,7 @@ const Signup = () => {
               id="password"
               {...register("password")}
               // onChange={handlePasswordChange}
-              autoComplete="current-password"
+              autoComplete="off"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">

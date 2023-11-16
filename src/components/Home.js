@@ -38,13 +38,13 @@ function Home() {
   const [microchip,setMicrochip] = useState([])
   const [doc,setDocNo] = React.useState(0)
   const [category,Setcategory] = React.useState("")
-
+  const [duplicate,setDuplicate]=useState(1)
   const [count, setCount] = useState();
   const history = useHistory();
   const url=process.env.REACT_APP_DEVELOPMENT;
   const columns = [
     { field: 'id', headerName: 'ID', width: 50 },
-    { field: 'doc', headerName: 'Doc', width: 50 },
+    { field: 'doc', headerName: 'Doc', width: 80 ,},
     // { field: 'date', headerName: 'Date', width: 130 },
     {headerName: "Date",field: "date",width: 130,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
     { field: 'name', headerName: 'Name', width: 150 },
@@ -105,6 +105,7 @@ function Home() {
         name:selectmemberno.ownername,
         microchip:microchip,
         category:category,
+        duplicate:duplicate,
         doc,
         ...data,
       };
@@ -140,6 +141,7 @@ function Home() {
         name:selectmemberno.ownername,
         microchip:microchip,
         category:category,
+        duplicate:duplicate,
         doc,
         ...data,
       };
@@ -222,7 +224,7 @@ function Home() {
           await axios.get(`${process.env.REACT_APP_DEVELOPMENT}/api/getreceipt`)
           .then(response=>{
             if(response.data.length>0){
-             setDocNo(response.data[0].doc+1)
+             setDocNo(parseInt(response.data[0].doc+1) )
             }
 
             let arr = response.data.map((item,index) =>({
@@ -664,6 +666,19 @@ function Home() {
                 </LocalizationProvider>
           </div>
         </div>
+        <div className="row my-3 ">
+        <div className="col ">
+          <TextField
+            id="outlined-basic"
+            sx={{ width: 230 }}
+            label="Duplicate"
+            variant="outlined"
+            type="number"
+            value={duplicate}
+            onChange={(e) => setDuplicate(e.target.value)}
+          />
+        </div>
+      </div>
         <Stack spacing={2} direction="row" marginBottom={2}  justifyContent="center">
            <Button variant="contained" color="success"   onClick={handleSaveButtonClick}  > <SaveIcon className="mr-1"/> Save Form</Button>
            </Stack>

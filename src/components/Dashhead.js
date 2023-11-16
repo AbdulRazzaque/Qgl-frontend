@@ -13,6 +13,7 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import { connect } from "react-redux";
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import CardMembershipIcon from '@mui/icons-material/CardMembership';
+import LogoutIcon from '@mui/icons-material/Logout';
 import InfoIcon from "@mui/icons-material/Info";
 const Dashhead = (props) => {
   console.log(props);
@@ -69,10 +70,24 @@ const Dashhead = (props) => {
           </p>
         </div>
       )}
+      {id === 4 ? (
+        <div className="menu-container-active">
+          <p onClick={() => props.history.push("/")}>
+            <ControlPointIcon /> Log Out
+          </p>
+        </div>
+      ) : (
+        <div className="menu-container" onClick={() => props.history.push("/")}>
+          <p>
+            <LogoutIcon /> Log Out
+          </p>
+        </div>
+      )}
 
     </div>
   );
 };
+
 
 const mapStateToProps = ({ EventUser }) => {
   return {

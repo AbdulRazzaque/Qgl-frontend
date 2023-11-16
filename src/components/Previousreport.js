@@ -457,7 +457,8 @@ const handleRowClick=(event,rowData)=>{
           fontWeight: 'bold',
         },
         exportButton: true,
-        paging: false, // Disable pagination
+        pageSize: 50, // Set the initial page size to 100
+        pageSizeOptions: [100,300,400], // Provide an array of possible page sizes
         search: true,
         filtering:true
       }}

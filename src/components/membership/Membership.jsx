@@ -106,7 +106,19 @@ const Membership = () => {
                 console.log("Response", response);
                 setData(response.data);
                 allData();
-              });
+              }).catch(error=>{
+                toast(error.response.data,{
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "dark",
+                });
+                
+              })
               setData(data);
             }
         });
@@ -254,6 +266,7 @@ const deleteRow =async(update)=>{
       <Dialog open={showDialog} style={{ height: 600 }}>
   <DialogTitle>Update Data</DialogTitle>
   <DialogContent>
+
     <form>
       <div className="row">
         <div className="col-6">
@@ -359,6 +372,7 @@ const deleteRow =async(update)=>{
         )}
      
         <h1 className="text-center attractive-header ">Members</h1>
+        <ToastContainer />
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="container">
         <div className="row justify-content-center">
@@ -478,7 +492,7 @@ const deleteRow =async(update)=>{
           fontWeight: 'bold',
         },
         exportButton: true,
-        paging: false, // Disable pagination
+        // paging: false, // Disable pagination
         search: true,
         filtering:true
       }}

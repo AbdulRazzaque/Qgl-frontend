@@ -48,6 +48,7 @@ function Previousreport() {
     { field: 'membership', title: 'Membership', width: 100 },
     { field: 'cash', title: 'Payment Method', width: 100 },
     { field: 'being', title: 'Being', width: 100 },
+    { field: 'category', title: 'category', width: 100 },
     // {title: "Microchip ",field: "microchip",width: 150,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
     {field: "microchip",title: "Microchip", type:'date',width: 150,render:(rowData)=>moment(rowData.microchip).format("DD/MM/YYYY")},
     { 
@@ -321,11 +322,25 @@ const handleRowClick=(event,rowData)=>{
           <div class="mb-3">
             <label for="membership" class="form-label">Membership No</label>
             <input
-              type="number"
+              type="text"
               class="form-control"
               id="membership"
               name="membership"
               value={update.membership}
+              onChange={updateData}
+              required
+            />
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="mb-3">
+            <label for="membership" class="form-label">category</label>
+            <input
+              type="text"
+              class="form-control"
+              id="membership"
+              name="category"
+              value={update.category}
               onChange={updateData}
               required
             />

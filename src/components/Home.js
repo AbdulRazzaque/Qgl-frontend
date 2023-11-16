@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Dashhead from "./Dashhead";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Autocomplete, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Stack, TextField } from "@mui/material";
+import { Autocomplete, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import SaveIcon from '@mui/icons-material/Save';
 import PrintIcon from "@mui/icons-material/Print";
@@ -17,8 +17,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import moment from "moment";
 import dayjs from "dayjs";
 import date from "date-and-time";
+import FormControl from '@mui/material/FormControl';
 import Receiptpdf from "./Receiptpdf";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { ToastContainer, toast } from 'react-toastify';
+ import 'react-toastify/dist/ReactToastify.css';
 function Home() {
   const [display, setDisplay] = React.useState(false);
   const [data,setData] = React.useState([])
@@ -31,9 +34,10 @@ function Home() {
   const [updateMicrochip, setupdateMicrochip] = React.useState(dayjs());
   const [owner,setOwner]=useState([])
   const [selectowner,setSelectedOwner]=useState([])
-  const [selectmemberno,setSelectedMemberNo]=useState(null)
+  const [selectmemberno,setSelectedMemberNo]=useState([])
   const [microchip,setMicrochip] = useState([])
-
+  const [doc,setDocNo] = React.useState(0)
+  const [category,Setcategory] = React.useState("")
 
   const [count, setCount] = useState();
   const history = useHistory();
@@ -48,6 +52,7 @@ function Home() {
     { field: 'membership', headerName: 'Membership', width: 130 },
     { field: 'cash', headerName: 'Payment Method', width: 130 },
     { field: 'being', headerName: 'Being', width: 130 },
+    { field: 'category', headerName: 'Category', width: 130 },
     {headerName: "Microchip ",field: "microchip",width: 150,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
 
         {
@@ -98,16 +103,32 @@ function Home() {
         date: selectedDate,
         membership:selectmemberno.membershipno,
         name:selectmemberno.ownername,
-        doc:count,
         microchip:microchip,
+        category:category,
+        doc,
         ...data,
       };
       try {
         await axios.post(`${process.env.REACT_APP_DEVELOPMENT}/api/qgl`,obj)
+        .then(response=>{
         // setCount(count + 1);
-        setCount((prevCount) => prevCount + 1);
+        // setCount((prevCount) => prevCount + 1);
         console.log('Data saved successfully');
         reset();
+        }).catch(error=>{
+          toast(error.response.data,{
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          
+        })
+       
        } catch(error) {
          console.log(error,"This is error")
        }
@@ -117,8 +138,9 @@ function Home() {
         date: selectedDate,
         membership:selectmemberno.membershipno,
         name:selectmemberno.ownername,
-        doc:count,
         microchip:microchip,
+        category:category,
+        doc,
         ...data,
       };
       const combinedObj = {...data ,...obj};
@@ -128,7 +150,19 @@ function Home() {
           // setCount((prevCount) => prevCount + 1);
           history.push('/Receiptpdf', { data:combinedObj });
           reset();
-       })
+       }).catch(error=>{
+        toast(error.response.data,{
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        
+      })
        } catch(error) {
          console.log(error,"This is error")
        }
@@ -187,21 +221,10 @@ function Home() {
          
           await axios.get(`${process.env.REACT_APP_DEVELOPMENT}/api/getreceipt`)
           .then(response=>{
-              if(response){
+            if(response.data.length>0){
+             setDocNo(response.data[0].doc+1)
+            }
 
-                // setCount(parseInt(response.data[0].doc) + 1);
-                // console.log(response.data[0].doc)
-                // console.log(response.data[0].doc + 1);
-                const highestDocNumber = response.data.reduce((max, item) => Math.max(max, item.doc), 0);
-
-                // Update the count to the next available document number
-                setCount(highestDocNumber + 1);
-              } 
-              if (response) {
-                const existingDocuments = response.data.map((doc, index) => ({ ...doc, id: index + 1 }));
-                setCount(existingDocuments.length + 1);
-              }
-              // setCount(response.data[0].doc + 1)
             let arr = response.data.map((item,index) =>({
               ...item,
               id:index +1,
@@ -225,24 +248,13 @@ function Home() {
     try {
       await axios.delete(`${process.env.REACT_APP_DEVELOPMENT}/api/deletereceipt/${update._id}`,update)
       .then(response=>{
-        console.log(response)
-    
-        // setData(data.filter(item => item._id !== update._id));
-        // Remove the deleted document from the local data
-      const updatedData = data.filter(item => item._id !== update._id);
-      // setData(updatedData);
-
-      // After deletion, update the count to reflect the correct next available document number
-      // setCount(updatedData.length + 1);
-
-      window.location.reload();
+        console.log(response.data)
     })
-
       setAlert(false)
     } catch (error) {
       console.log(error)
     }
-    // alldata()
+    alldata()
   }
  
 
@@ -266,8 +278,10 @@ function Home() {
     deleteRow()
     getOwnerName()
   },[])
-
-  
+  const handleChange = (event) => {
+    Setcategory(event.target.value);
+  };
+  console.log(doc,"this is Doc NO")
   return (
     <div className="row">
       <div className="col-xs-12 col-sm-12 col-md-2 col-lg-2 col-xl-2">
@@ -396,10 +410,25 @@ function Home() {
               sx={{ width: 500 }}
               label="Membership No"
               variant="outlined"
-              type="number"
+              type="text"
               required
               name='membership'
               value={update.membership}
+              onChange={updateData}
+            />
+          </div>
+        </div>
+        <div className="row my-3 ">
+          <div className="col ">
+            <TextField
+              id="outlined-basic"
+              sx={{ width: 500 }}
+              label="category"
+              variant="outlined"
+              type="text"
+              required
+              name='category'
+              value={update.category}
               onChange={updateData}
             />
           </div>
@@ -472,7 +501,7 @@ function Home() {
         )}
 
 </Container>
-
+<ToastContainer />
     <form onSubmit={handleSubmit(onSubmit)}>
 <div className="row my-3 ">
       
@@ -483,11 +512,13 @@ function Home() {
             <TextField
               id="outlined-basic"
               sx={{ width: 230 }}
-             
-              value={count} 
+             disabled
+              value={doc} 
        
               variant="outlined"
-              {...register('doc', { required: true })}
+             onChange={(e)=>{
+              setDocNo(e.target.value)
+             }}
       
               required
             />
@@ -519,12 +550,13 @@ function Home() {
                   onChange={(event, newValue) => {
                     setSelectedMemberNo(newValue);
                   }}
+                  
                   getOptionLabel={(ownerName) =>` ${ownerName.membershipno} ${ownerName.ownername}`}
                   options={owner}
                   sx={{ width: 500 }}
                   //  {...register("suplier", { required: true, maxLength: 20 })}
                   renderInput={(params) => (
-                    <TextField {...params} label="Select Membership No" />
+                    <TextField {...params} label="Select Membership No" required/>
                   )}
                 />
           </div>
@@ -548,6 +580,28 @@ function Home() {
                   )}
                 />
           </div>
+          
+        </div>
+        <div className="row my-3 ">
+        <div className="col ">          
+          <FormControl sx={{ width: 500 }}>
+         
+        <InputLabel id="demo-simple-select-label">category</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={category}
+          label="category"
+          onChange={handleChange}
+        >
+           
+          <MenuItem value='Private'>Private</MenuItem>
+          <MenuItem value='Blood parasite'>Blood parasite</MenuItem>
+          <MenuItem value='Committee'>Committee</MenuItem>
+        </Select>
+      </FormControl>
+          </div>
+          
         </div>
         <div className="row my-3 ">
           <div className="col ">
@@ -612,9 +666,13 @@ function Home() {
         </div>
         <Stack spacing={2} direction="row" marginBottom={2}  justifyContent="center">
            <Button variant="contained" color="success"   onClick={handleSaveButtonClick}  > <SaveIcon className="mr-1"/> Save Form</Button>
-          <Button  variant="contained"  onClick={handlePrintButtonClick}><PrintIcon className="mr-1" /> Print Form</Button> 
            </Stack>
         </form>
+        <div style={{ textAlign: 'left',position:'relative',bottom:'35px' }} >
+      <Button variant="contained" onClick={handlePrintButtonClick}>
+        <PrintIcon className="mr-1" /> Print Form
+      </Button>
+    </div>
 </div>
 <div style={{ height: 400, width: '100%' }}>
       <DataGrid

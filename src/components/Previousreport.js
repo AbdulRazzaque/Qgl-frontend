@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Dashhead from "./Dashhead";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Autocomplete, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Pagination, Stack, TextField } from "@mui/material";
+import { Autocomplete, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Pagination, Paper, Stack, TextField } from "@mui/material";
 import { DatePicker, DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import SaveIcon from '@mui/icons-material/Save';
 import PrintIcon from "@mui/icons-material/Print";
@@ -90,7 +90,7 @@ function Previousreport() {
         </IconButton>
       ),
     },
-
+ 
   ];
   // ------------------------------------------update api here -------------------------------------------------------------
 
@@ -446,8 +446,8 @@ const handleRowClick=(event,rowData)=>{
             <button type="submit" class="btn btn-primary" >submit</button>
           </Stack>
             </form>
-          
-        <MaterialTable
+          <div>
+  <MaterialTable
       title="Previous Details"
       columns={columns}
       data={data}       
@@ -462,9 +462,13 @@ const handleRowClick=(event,rowData)=>{
         search: true,
         filtering:true
       }}
-
+      components={{
+        Container: props => <Paper  {...props} style={{ overflowX: 'auto' }} />,
+      }}
 
     />
+          </div>
+      
     </div>
 
 

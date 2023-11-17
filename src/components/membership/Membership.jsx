@@ -36,7 +36,7 @@ const Membership = () => {
     const [update, setUpdate] = useState([]);
   const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm();
     //--------------------------------------------------------- Get Data by date request ------------------------------------------------------------
-   const url=process.env.REACT_APP_DEVELOPMENT;
+   const url=process.env.REACT_APP_DEVELOPMENT; 
    const allData=()=>{
     axios.get(`${url}/api/getmembers`)
     .then(response=>{
@@ -497,7 +497,9 @@ const deleteRow =async(update)=>{
         filtering:true
       }}
 
-
+      components={{
+        Container: props => <Paper {...props} style={{ overflowX: 'auto' }} />,
+      }}
     />
       </div>
       </div>

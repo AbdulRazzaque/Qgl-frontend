@@ -222,11 +222,10 @@ function Home() {
         try {
          
           await axios.get(`${process.env.REACT_APP_DEVELOPMENT}/api/getreceipt`)
-          .then(response=>{
+          .then( response=>{
             if(response.data.length>0){
-             setDocNo(parseInt(response.data[0].doc+1) )
+             setDocNo(parseInt(response.data[0].doc)+1)
             }
-
             let arr = response.data.map((item,index) =>({
               ...item,
               id:index +1,
@@ -514,7 +513,7 @@ function Home() {
             <TextField
               id="outlined-basic"
               sx={{ width: 230 }}
-             disabled
+            //  disabled
               value={doc} 
        
               variant="outlined"
@@ -544,7 +543,7 @@ function Home() {
         </div>
         <div className="row my-3 ">
           <div className="col ">
-       
+         
              <Autocomplete
                   disablePortal
                   id="combo-box-demo"

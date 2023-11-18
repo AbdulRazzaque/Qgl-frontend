@@ -22,6 +22,8 @@ import Receiptpdf from "./Receiptpdf";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { ToastContainer, toast } from 'react-toastify';
  import 'react-toastify/dist/ReactToastify.css';
+ import _ from 'lodash';
+
 function Home() {
   const [display, setDisplay] = React.useState(false);
   const [data,setData] = React.useState([])
@@ -33,6 +35,7 @@ function Home() {
   const [updatedate, setupdatedate] = React.useState(dayjs());
   const [updateMicrochip, setupdateMicrochip] = React.useState(dayjs());
   const [owner,setOwner]=useState([])
+  const [loading, setLoading] = useState(false);
   const [selectowner,setSelectedOwner]=useState([])
   const [selectmemberno,setSelectedMemberNo]=useState([])
   const [microchip,setMicrochip] = useState([])
@@ -268,17 +271,73 @@ function Home() {
   }
   // ------------------------------------------Membership owner code  api here -------------------------------------------------------------
 
-  const getOwnerName=async()=>{
-    axios.get(`${url}/api/getmembers`)
-    .then(response=>{
-      setOwner(response.data)
-    })
-  }
-  useEffect(()=>{
-    alldata()
-    deleteRow()
-    getOwnerName()
-  },[])
+  // const getOwnerName=async()=>{
+  //   axios.get(`${url}/api/getmembers`)
+  //   .then(response=>{
+  //     setOwner(response.data)
+  //   })
+  // }
+  // const fetchData = async (inputValue) => {
+  //   try {
+  //     const response = await axios.get(`${url}/api/getmembers`, {
+  //       params: { search: inputValue }, // Assuming your server supports a search parameter
+  //     });
+  //     setOwner(response.data);
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //   }
+  // };
+  
+  // const debouncedFetchData = _.debounce(fetchData, 300); // Adjust the debounce delay as needed
+  // useEffect(()=>{
+  //   alldata()
+  //   deleteRow()
+  //   // getOwnerName()
+  //   fetchData()
+  // },[])
+  // const fetchPaginatedData = async (inputValue, page = 1, pageSize = 50) => {
+  //   try {
+  //     const response = await axios.get(`${url}/api/getmembers`, {
+  //       params: {
+  //         search: inputValue,
+  //         page,
+  //         pageSize,
+  //       },
+  //     });
+  //     setOwner((prevData) => [...prevData, ...response.data]);
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //   }
+  // };
+  
+  // const debouncedFetchData = _.debounce(fetchPaginatedData, 300); // Adjust the debounce delay as needed
+  const fetchOwnerData = async (inputValue) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${url}/api/getmembers`, {
+        params: { search: inputValue },
+      });
+      setOwner(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const debouncedFetchData = _.debounce(fetchOwnerData, 300);
+
+  const handleInputChange = (event, value, reason) => {
+    if (reason === 'input') {
+      debouncedFetchData(value);
+    }
+  };
+  useEffect(() => {
+    alldata();
+    deleteRow();
+    fetchOwnerData('');
+  }, []);
+  
   const handleChange = (event) => {
     Setcategory(event.target.value);
   };
@@ -543,11 +602,46 @@ function Home() {
         </div>
         <div className="row my-3 ">
           <div className="col ">
-         
-             <Autocomplete
+          {/* <Autocomplete
+  disablePortal
+  id="combo-box-demo"
+  onChange={(event, newValue) => {
+    setSelectedMemberNo(newValue);
+  }}
+  getOptionLabel={(ownerName) => ` ${ownerName.membershipno} ${ownerName.ownername}`}
+  options={owner}
+  sx={{ width: 500 }}
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      label="Select Membership No"
+      required
+      onChange={(event) => debouncedFetchData(event.target.value)}
+    />
+  )}
+/> */}
+ <Autocomplete
+      disablePortal
+      id="combo-box-demo"
+      loading={loading}
+      options={owner}
+      onChange={(event, newValue) => {
+        setSelectedMemberNo(newValue);
+      }}
+      getOptionLabel={(ownerName) => ` ${ownerName.membershipno} ${ownerName.ownername}`}
+      sx={{ width: 500 }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="Select Membership No"
+          required
+          onChange={handleInputChange}
+        />
+      )}
+    />
+             {/* <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  // value={supplierId}
                   onChange={(event, newValue) => {
                     setSelectedMemberNo(newValue);
                   }}
@@ -555,11 +649,10 @@ function Home() {
                   getOptionLabel={(ownerName) =>` ${ownerName.membershipno} ${ownerName.ownername}`}
                   options={owner}
                   sx={{ width: 500 }}
-                  //  {...register("suplier", { required: true, maxLength: 20 })}
                   renderInput={(params) => (
                     <TextField {...params} label="Select Membership No" required/>
                   )}
-                />
+                /> */}
           </div>
         </div>
         <div className="row my-3 ">

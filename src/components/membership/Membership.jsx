@@ -418,7 +418,7 @@ const deleteRow =async(update)=>{
 
             <div className="form-outline mb-4">
               <input
-                type="text"
+                type="number"
                 id="form4Example4"
                 placeholder="Please Enter Nationality Id"
                 className="form-control p-4"
@@ -431,7 +431,7 @@ const deleteRow =async(update)=>{
 
             <div className="form-outline mb-4">
               <input
-                type="text"
+                type="number"
                 id="form4Example5"
                 placeholder="Please Enter Telephone"
                 className="form-control p-4"
@@ -444,7 +444,7 @@ const deleteRow =async(update)=>{
 
             <div className="form-outline mb-4">
               <input
-                type="text"
+                type="number"
                 id="form4Example6"
                 placeholder="Please Enter Extra Telephone"
                 className="form-control p-4"

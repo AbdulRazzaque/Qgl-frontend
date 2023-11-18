@@ -57,7 +57,7 @@ React.useEffect(()=>{
   </div>
    <div class="col-4 my-2  dark-border border-top-0 border-left-0 border-right-0">
  
-    <span className='value'>{locationData.name}</span> 
+    <span className='name'><b>{locationData.name}</b></span> 
   </div>
    <div class="col-5 my-2 ">
   <h3 className='key'>استلمنا من السيد</h3> 
@@ -101,7 +101,7 @@ React.useEffect(()=>{
   </div>
    <div class="col-4 my-2   dark-border border-top-0 border-left-0 border-right-0">
  
-    <span className='value'>{locationData.being}</span> 
+    <span className='being'>{locationData.being}</span> 
   </div>
 
    <div class="col-5 my-2 ">

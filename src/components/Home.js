@@ -56,6 +56,7 @@ function Home() {
   const [doc, setDocNo] = React.useState(0);
   const [category, Setcategory] = React.useState("");
   const [duplicate, setDuplicate] = useState(1);
+  const [inputValue, setInputValue] = useState('');
   const [count, setCount] = useState();
   const history = useHistory();
   const url = process.env.REACT_APP_DEVELOPMENT;
@@ -298,33 +299,42 @@ function Home() {
     console.log(row, "After clicking clickpritn icon");
   };
   // ------------------------------------------Membership owner code  api here -------------------------------------------------------------
+  const handleInputChange = (event, newInputValue) => {
+    setInputValue(newInputValue);
 
-  const fetchOwnerData = async (inputValue) => {
-    try {
-      setLoading(true);
-      const response = await axios.get(`${url}/api/getmembers`, {
-        params: { search: inputValue },
-      });
-      setOwner(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
+    // Call the API with the input value
+    if (newInputValue.length > 0) {
+      setLoading(true); // Set loading to true while fetching data
+      callApi(newInputValue);
+    } else {
+      // Clear results if input is empty
+      setOwner([]);
       setLoading(false);
     }
   };
 
-  const debouncedFetchData = _.debounce(fetchOwnerData, 300);
+  const callApi = async (input) => {
+    // Replace 'YOUR_API_ENDPOINT' with the actual API endpoint
+    const apiEndpoint = `${url}/api/getmembers`;
 
-  const handleInputChange = (event, value, reason) => {
-    if (reason === "input") {
-      debouncedFetchData(value);
+    try {
+      const response = await fetch(`${apiEndpoint}?query=${input}`);
+      const data = await response.json();
+
+      // Handle the API response
+      setOwner(data);
+    } catch (error) {
+      console.error('Error calling API:', error);
+    } finally {
+      setLoading(false); // Set loading to false once data is fetched
     }
   };
   useEffect(() => {
     alldata();
     deleteRow();
-    fetchOwnerData("");
+    // fetchOwnerData("");
   }, []);
+// ====================================================================Category select Code Here ======================================
   const handleChange = (event) => {
     Setcategory(event.target.value);
   };
@@ -578,28 +588,38 @@ function Home() {
             </div>
             <div className="row my-3 ">
               <div className="col ">
-                <Autocomplete
-                  disablePortal
-                  id="combo-box-demo"
-                  loading={loading}
-                  options={owner}
-                  onChange={(event, newValue) => {
-                    setSelectedMemberNo(newValue);
-                  }}
-            
-                  getOptionLabel={(ownerName) =>
-                    ` ${ownerName.membershipno} ${ownerName.ownername}`
-                  }
-                  sx={{ width: 500 }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Select Membership No"
-                      required
-                      onChange={handleInputChange}
-                    />
-                  )}
-                />
+        <Autocomplete
+      disablePortal
+      id="combo-box-demo"
+      options={owner}
+      onChange={(event, newValue) => {
+        setSelectedMemberNo(newValue);
+      }}
+      getOptionLabel={(ownerName) =>
+        ` ${ownerName.membershipno} ${ownerName.ownername}`
+      }
+      inputValue={inputValue}
+      onInputChange={handleInputChange}
+      loading={loading} // Use the loading prop to indicate loading state
+      sx={{ width: 500 }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="Select Membership No"
+          required
+          InputProps={{
+            ...params.InputProps,
+            endAdornment: (
+              <>
+                {loading && <span>Loading...</span>}
+                {params.InputProps.endAdornment}
+              </>
+            ),
+          }}
+        />
+      )}
+    />
+
               </div>
             </div>
             <div className="row my-3 ">

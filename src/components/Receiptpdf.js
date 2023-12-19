@@ -2,6 +2,12 @@ import React, { useEffect } from 'react'
 import './pdf.scss'
 import axios from 'axios';
 import moment from 'moment'
+// import logo from '../../images/logo.png';
+import logo from '../images/logo.png'
+import FIRSTLAB from '../images/FIRST LAB.png'
+import GENETICCENTER from '../images/GENETIC CENTER.png'
+import FOOTER from '../images/FOOTER.png'
+import COMMITTEELOGO from '../images/COMMITTEE LOGO.jpg'
 const Receiptpdf = (props) => {
   console.log('props:', props); // Add this line
   const locationData = props.location.state?.data;
@@ -17,30 +23,53 @@ React.useEffect(()=>{
     <>
      {locationData && (
      <div className="">
-   
+  <div className='row mx-auto'>
+    <div className='col-4'>
+  <img src={FIRSTLAB} alt="Logo" className='mylogo' />
 
-   <h1 className='text-center title'>سند قبض نقدأ/شيك</h1> 
-   <h1 className='text-center title '>CASH/CHEQUE RECEIPT VOUCHER</h1> 
-   <h4 className='text-center title'>ريال قطري QR</h4> 
+    </div>
+    <div className='col-4'>
+  <img src={GENETICCENTER} alt="Logo" className='mylogo' />
 
-<div class="row rectip  ">
-  <div class="col">
+    </div>
+    <div className='col-4'>
+ {
+  // (locationData.category === "Committee"?  <img src={COMMITTEELOGO} alt="Logo" className='mylogo' />:"")
+  (locationData.category === "Committee" || locationData.category === "Blood parasite" ?  <img src={COMMITTEELOGO} alt="Logo" className='mylogo' />:"")
+} 
+ 
+  
+ 
+    </div>
+  </div>
+<div className='title'>
+<h1 className='text-center title1'>سند القبض</h1> 
+   <h1 className='text-center title2 '>RECEIPT VOUCHER</h1> 
+   <h4 className='text-center title3'>QR ريال قطري </h4> 
+</div>
+  
+ 
+ 
+   <div class="container center-print">
+  <div class="row my-3 justify-content-center align-items-center">
+
+  <div class="col-auto">
   <h3 className='key'> No : <span className='value'>{locationData.doc}</span> </h3> 
   </div>
-  <div class="col">
+  <div class="col-auto">
   <div class="row">
-  <div class="col dark-border">
+  <div class="col-auto dark-border">
   <h3 className='key'> Amount</h3> 
   </div>
-  <div class="col  dark-border">
+  <div class="col-auto  dark-border">
   <h3 className='key'>{locationData.amount}</h3> 
   </div>
-  <div class="col dark-border">
+  <div class="col-auto dark-border">
   <h3 className='key'> المبلغ</h3> 
   </div>
 </div>
   </div>
-  <div class="col-4">
+  <div class="col-auto">
   <h3 className='key'>Date: <span className='value'>{new Date(locationData.date).toLocaleDateString('en-US')}</span>
 
 </h3> 
@@ -49,91 +78,104 @@ React.useEffect(()=>{
 
   </div>
 </div>
-
-<div class="row">
-   
-   <div class="col-3 my-2  ">
-  <h3 className='key'>Received From Mr/ Mrs</h3> 
-  </div>
-   <div class="col-4 my-2  dark-border border-top-0 border-left-0 border-right-0">
- 
-    <span className='name'><b>{locationData.name}</b></span> 
-  </div>
-   <div class="col-5 my-2 ">
-  <h3 className='key'>استلمنا من السيد</h3> 
-  </div>
-  
-   <div class="col-3 my-2  ">
-  <h3 className='key'>The Amount Paid</h3> 
-  </div>
-   <div class="col-4 my-2   dark-border border-top-0 border-left-0 border-right-0">
- 
-    <span className='value'>{locationData.amount}</span> 
-  </div>
-   <div class="col-5 my-2 ">
-  <h3 className='key'>المبلغ المدفوع </h3> 
-  </div>
-  
-   <div class="col-3 my-2  ">
-  <h3 className='key'>Membership No</h3> 
-  </div>
-   <div class="col-4 my-2   dark-border border-top-0 border-left-0 border-right-0">
- 
-    <span className='value'>{locationData.membership}</span> 
-  </div>
-   <div class="col-5 my-2 ">
-  <h3 className='key'>رقم المشارك</h3> 
-  </div>
-
-   <div class="col-3 my-2  ">
-  <h3 className='key'>Payment Method</h3> 
-  </div>
-   <div class="col-4 my-2  dark-border border-top-0 border-left-0 border-right-0">
- 
-    <span className='value'>{locationData.cash}</span> 
-  </div>
-   <div class="col-5 my-2 ">
-  <h3 className='key'>نقدا</h3> 
-  </div>
- 
-   <div class="col-3 my-2  ">
-  <h3 className='key'>Being for</h3> 
-  </div>
-   <div class="col-4 my-2   dark-border border-top-0 border-left-0 border-right-0">
- 
-    <span className='being'>{locationData.being}</span> 
-  </div>
-
-   <div class="col-5 my-2 ">
-  <h3 className='key'>ذالك عن</h3> 
-  </div>
-   <div class="col-3 my-2  ">
-  <h3 className='key'>Microchip Implementation</h3> 
-  </div>
-   <div class="col-4 my-2   dark-border border-top-0 border-left-0 border-right-0">
- 
-    <span className='value'>{new Date(locationData.microchip).toLocaleDateString('en-US')}</span> 
-  </div>
-
-   <div class="col-5 my-2 ">
-  <h3 className='key'>تاريخ الترصيص</h3> 
-  </div>
-  
-
-   <div class="col my-t">
-  <h3 className='key'>تو قيع المستلم</h3> 
-  <h3 className='key mt-2'> Receiver Sign</h3> 
-
-  </div>
- 
-   <div class="col mt-2">
-  <h3 className='key'>تو قيع المحاسب</h3> 
-  <h3 className='key mt-2'> Accountant Sign</h3> 
-  </div>
-  
 </div>
+<div class="container center-print">
+  <div class="row my-3 justify-content-center align-items-center">
+  {/* First Row Start Here  */}
+    <div class="col-3 my-2">
+      <h3 className='key'>Received From Mr/ Mrs</h3> 
+    </div>
+    <div class="col-4 my-2 dark-border border-top-0 border-left-0 border-right-0">
+      <span className='name'><b>{locationData.name}</b></span> 
+    </div>
+    <div class="col-3 my-2">
+      <h3 className='key'>استلمنا من السيد</h3> 
+    </div>
+    {/* Second Row start Here  */}
+    <div class="col-3 my-2">
+    <h3 className='key'>The Amount Paid</h3> 
+    </div>
+    <div class="col-4 my-2 dark-border border-top-0 border-left-0 border-right-0">
+    <span className='value'>{locationData.amount} QR</span> 
+    </div>
+    <div class="col-3 my-2">
+    <h3 className='key'>المبلغ المدفوع </h3> 
+    </div>
+    {/* Third Row start Here  */}
+    <div class="col-3 my-2">
+    <h3 className='key'>Membership No</h3> 
+    </div>
+    <div class="col-4 my-2 dark-border border-top-0 border-left-0 border-right-0">
+    <span className='value'>{locationData.membership}</span> 
+    </div>
+    <div class="col-3 my-2">
+    <h3 className='key'>رقم المشارك</h3> 
+    </div>
+    {/* forth Row start Here  */}
+    <div class="col-3 my-2">
+    <h3 className='key'>Payment Method</h3> 
+    </div>
+    <div class="col-4 my-2 dark-border border-top-0 border-left-0 border-right-0">
+    <span className='value'>{locationData.cash}</span> 
+    </div>
+    <div class="col-3 my-2">
+    <h3 className='key'>طريقه الدفع</h3> 
+    </div>
+    {/* Fifh Row start Here  */}
+    <div class="col-3 my-2">
+    <h3 className='key'>Being for</h3> 
+    </div>
+    <div class="col-4 my-2 dark-border border-top-0 border-left-0 border-right-0">
+    <span className='being'>{locationData.being}</span> 
+    </div>
+    <div class="col-3 my-2">
+    <h3 className='key'>ذلك عن</h3> 
+    </div>
+    {/* Fifh Row start Here  */}
+    <div class="col-3 my-2">
+    <h3 className='key'>Telephone</h3> 
+    </div>
+    <div class="col-4 my-2 dark-border border-top-0 border-left-0 border-right-0">
+    <span className='being'>{locationData.telephone}</span> 
+    </div>
+    <div class="col-3 my-2">
+    <h3 className='key'>هاتف</h3> 
+    </div>
+    {/* Sixth Row start Here  */}
+    <div class="col-3 my-2">
+    <h3 className='key'>Microchip Implementation</h3> 
+    </div>
+    <div class="col-4 my-2 dark-border border-top-0 border-left-0 border-right-0">
+    <span className='value'>
+      {locationData.microchip && !isNaN  (new Date(locationData.microchip))? 
+    new Date(locationData.microchip).toLocaleDateString('en-Us'):""}</span> 
+    </div>
+    <div class="col-3 my-2">
+    <h3 className='key'>تاريخ الترصيص</h3> 
+    </div>
+   
+   {/* seven Row Start Here  */}
+   
+   
+  </div>
 
- 
+
+</div>
+<div className='container sign mt-3'>
+<div className='row'>
+<div className='col-6 '>
+<h3 className='key'>تو قيع المستلم</h3> 
+  <h3 className='key '> Receiver Sign</h3> 
+</div>
+<div className='col-6'>
+  <h3 className='key '>تو قيع المحاسب</h3> 
+  <h3 className='key '> Accountant Sign</h3> 
+</div>
+</div>
+</div>
+<div className='mt-5'>
+  <img src={FOOTER} alt='footer'/>
+</div>
 
       </div>
        )}

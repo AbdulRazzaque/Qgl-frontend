@@ -1,95 +1,45 @@
-// .report-pdf-2{
-//   padding:2% 2% 2% 2%;
-//   h1,h2,h3,h4,h5,p,span{
-
-//       // font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
-//       font-family: Arial, sans-serif;
-      
-//   }
-//   .right{
-//       text-align: right;
-//       font-size: 1.8em;
-//   }
-//   .container-first{
-//       img{
-//           width: 50%;
-//       }
-//   }
-
-//   footer {
-//       font-size: 15px;
-//       display: flex;
-//       justify-content: center;
-//       align-items: center;
-//       font-weight: bold;
-//     }
-    
-//     @page {
-//       size: A5;
-//       margin: 11mm 17mm 17mm 17mm;
-//     }
-    
-//     @media print {
-//       footer {
-//         position: fixed;
-//         p{
-//           text-align: center !important;
-//       }
-//         bottom: 0;
-//       }
-    
-//       .content-block, p {
-//         page-break-inside: avoid;
-//       }
-    
-//       html, body {
-//         width: 210mm;
-//         height: 297mm;
-//       }
-//     }
-   
-
-// }
-/* Print styles for A5 paper */
-/* Print styles for A5 paper */
-@media print {
-  /* Set the paper size to A5 */
+@media print{
   @page {
+      size: a5 landscape;
 
-    size: 12.8cm 0cm; /* A5 size in centimeters */
-
-    margin: 0;
   }
 
-  /* Define the styles for your React component */
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    height: 0;
+  .center-print {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    left: 80px;
+
   }
 
-  /* Style your React component */
-  .rectip {
-    margin-top: 0px;
-    // width: 100%;
-    max-width: 21.8cm; /* A5 width in centimeters */
-    // max-width: 40.8cm; /* A5 width in centimeters */
-    margin: 0 ;
-    padding: 10px;
+  .sign{
+    position: relative;
+    left: 180px;
   }
+}
+.sign{
+  position: relative;
+  left: 180px;
+}
+.mylogo{
+  height: 86px;
+  position: relative;
+  left: 100px;
+  top: 25px;
 }
 .title{
-  margin-top: 0px;
-  margin-bottom: 0px;
-  padding: 2px;
-  margin-right: 100px;
+display: block;
+margin-top: 40px;
+}
+.title1{
+margin-bottom: -13px;
 
 }
-.sand{
-  margin-top: 30px;
-}
+.title2{
+margin-bottom: -14px;
 
+}
 
 
 .dark-border{

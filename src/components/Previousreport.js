@@ -197,6 +197,8 @@ console.log(data,'here i am cheack the data')
 const handleRowClick=(event,rowData)=>{
   setUpdate(rowData)
 }
+
+
     return (
         <div className="row">
             <div className="col-xs-12 col-sm-12 col-md-2 col-lg-2 col-xl-2">
@@ -447,6 +449,7 @@ const handleRowClick=(event,rowData)=>{
           </Stack>
             </form>
           <div>
+          <Paper>
   <MaterialTable
       title="Previous Details"
       columns={columns}
@@ -462,11 +465,10 @@ const handleRowClick=(event,rowData)=>{
         search: true,
         filtering:true
       }}
-      components={{
-        Container: props => <Paper  {...props} style={{ overflowX: 'auto' }} />,
-      }}
+     
 
-    />
+    /> 
+    </Paper>
           </div>
       
     </div>

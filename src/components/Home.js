@@ -25,7 +25,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import PrintIcon from "@mui/icons-material/Print";
 import { Link } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -58,6 +58,7 @@ function Home() {
   const [duplicate, setDuplicate] = useState(1);
   const [inputValue, setInputValue] = useState('');
   const [count, setCount] = useState();
+  const [selectedRows,setSelectedRows]= useState([])
   const history = useHistory();
   const url = process.env.REACT_APP_DEVELOPMENT;
   const columns = [
@@ -72,8 +73,9 @@ function Home() {
         moment.parseZone(param.value).local().format("DD/MM/YYYY"),
     },
     { field: "name", headerName: "Name", width: 150 },
-    { field: "amount", headerName: "Amount", width: 100 },
     { field: "membership", headerName: "Membership", width: 130 },
+    { field: "telephone", headerName: "Tele Phone", width: 130 },
+    { field: "amount", headerName: "Amount", width: 100 },
     { field: "cash", headerName: "Payment Method", width: 130 },
     { field: "being", headerName: "Being", width: 130 },
     { field: "category", headerName: "Category", width: 130 },
@@ -81,8 +83,9 @@ function Home() {
       headerName: "Microchip ",
       field: "microchip",
       width: 150,
-      renderCell: (param) =>
-        moment.parseZone(param.value).local().format("DD/MM/YYYY"),
+      // valueGetter: (param) =>
+        // moment.parseZone(param.value !== null ?.local().format("DD/MM/YYYY") :"" ),
+        valueGetter:(param)=>param.row.microchip ? moment.parseZone(param.row.microchip).local().format("DD/MM/YYYY"):""
     },
 
     {
@@ -137,6 +140,7 @@ function Home() {
         date: selectedDate,
         membership: selectmemberno.membershipno,
         name: selectmemberno.ownername,
+        telephone: selectmemberno.telephone,
         microchip: microchip,
         category: category,
         duplicate: duplicate,
@@ -149,7 +153,7 @@ function Home() {
           .then((response) => {
             // setCount(count + 1);
             // setCount((prevCount) => prevCount + 1);
-            console.log("Data saved successfully");
+            console.log( obj,"Data saved successfully");
             reset();
           })
           .catch((error) => {
@@ -172,6 +176,7 @@ function Home() {
         date: selectedDate,
         membership: selectmemberno.membershipno,
         name: selectmemberno.ownername,
+        telephone: selectmemberno.telephone,
         microchip: microchip,
         category: category,
         duplicate: duplicate,
@@ -332,13 +337,26 @@ function Home() {
   useEffect(() => {
     alldata();
     deleteRow();
-    // fetchOwnerData("");
   }, []);
 // ====================================================================Category select Code Here ======================================
   const handleChange = (event) => {
     Setcategory(event.target.value);
   };
-  console.log(doc, "this is Doc NO");
+  // ====================================================================Cheack Boxd selection Delete row  Code Here ======================================
+  
+const handleDeleteRow = async (selectedRows) => {
+  try {
+    await axios.delete(`${url}/api/deletereceipts/${selectedRows}`
+    ).then(response=>console.log(response.data))
+    alldata();
+    setAlert(false)
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// ====*******************************************************************************End*************************************************************************************************************************************************************
+  console.log(doc, "this is Doc NO"); 
   return (
     <div className="row">
       <div className="col-xs-12 col-sm-12 col-md-2 col-lg-2 col-xl-2">
@@ -371,6 +389,31 @@ function Home() {
                 </DialogContent>
                 <DialogActions>
                   <Button variant="contained" onClick={() => deleteRow(update)}>
+                    Yes
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => {
+                      setAlert(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            )}
+            {/* this is multple row data detel  */}
+            {alert && (
+              <Dialog open={alert} style={{ height: 600 }}>
+                <DialogTitle>Delete Row</DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    Are You sure You want to delete this.
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button variant="contained" onClick={() => handleDeleteRow(selectedRows)}>
                     Yes
                   </Button>
                   <Button
@@ -428,10 +471,39 @@ function Home() {
                         <TextField
                           id="outlined-basic"
                           sx={{ width: 500 }}
+                          label="Membership No"
+                          variant="outlined"
+                          type="text"
+                          required
+                          name="membership"
+                          value={update.membership}
+                          onChange={updateData}
+                        />
+                      </div>
+                    </div>
+                    <div className="row my-3 ">
+                      <div className="col ">
+                        <TextField
+                          id="outlined-basic"
+                          sx={{ width: 500 }}
                           label="Received From Mr/Mrs"
                           variant="outlined"
                           name="name"
                           value={update.name}
+                          onChange={updateData}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="row my-3 ">
+                      <div className="col ">
+                        <TextField
+                          id="outlined-basic"
+                          sx={{ width: 500 }}
+                          label="TelePhone"
+                          variant="outlined"
+                          name="telephone"
+                          value={update.telephone}
                           onChange={updateData}
                           required
                         />
@@ -452,21 +524,7 @@ function Home() {
                         />
                       </div>
                     </div>
-                    <div className="row my-3 ">
-                      <div className="col ">
-                        <TextField
-                          id="outlined-basic"
-                          sx={{ width: 500 }}
-                          label="Membership No"
-                          variant="outlined"
-                          type="text"
-                          required
-                          name="membership"
-                          value={update.membership}
-                          onChange={updateData}
-                        />
-                      </div>
-                    </div>
+                    
                     <div className="row my-3 ">
                       <div className="col ">
                         <TextField
@@ -596,7 +654,7 @@ function Home() {
         setSelectedMemberNo(newValue);
       }}
       getOptionLabel={(ownerName) =>
-        ` ${ownerName.membershipno} ${ownerName.ownername}`
+        ` ${ownerName.membershipno} ${ownerName.ownername} `
       }
       inputValue={inputValue}
       onInputChange={handleInputChange}
@@ -638,6 +696,26 @@ function Home() {
                   sx={{ width: 500 }}
                   renderInput={(params) => (
                     <TextField {...params} label="Owner Name" />
+                  )}
+                />
+              </div>
+            </div>
+            <div className="row my-3 ">
+              <div className="col ">
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  // value={supplierId}
+                  // onChange={(event, newValue) => {
+                  //   setSelectedOwner(newValue);
+                  // }}
+                  disabled
+                  getOptionLabel={(ownerName) => `${ownerName.telephone}`}
+                  value={selectmemberno ? selectmemberno : { telephone: "" }}
+                  options={owner}
+                  sx={{ width: 500 }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Tele phone" />
                   )}
                 />
               </div>
@@ -760,6 +838,7 @@ function Home() {
             </Button>
           </div>
         </div>
+        <Button variant="contained" color="error" onClick={() => setAlert(true)}> Delete Rows  <DeleteIcon/></Button>
         <div style={{ height: 400, width: "100%" }}>
           <DataGrid
             rows={data}
@@ -771,6 +850,12 @@ function Home() {
             }}
             pageSizeOptions={[5, 10]}
             onRowClick={(item) => setUpdate(item.row)}
+            checkboxSelection
+            getRowId={(row)=>row._id}
+            onSelectionModelChange={(ids)=>{
+              setSelectedRows(ids)
+            }}
+            
           />
         </div>
       </div>

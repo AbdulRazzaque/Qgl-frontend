@@ -833,9 +833,9 @@ const handleDeleteRow = async (selectedRows) => {
           <div
             style={{ textAlign: "left", position: "relative", bottom: "35px" }}
           >
-            <Button variant="contained" onClick={handlePrintButtonClick}>
+            {/* <Button variant="contained" onClick={handlePrintButtonClick}>
               <PrintIcon className="mr-1" /> Print Form
-            </Button>
+            </Button> */}
           </div>
         </div>
         <Button variant="contained" color="error" onClick={() => setAlert(true)}> Delete Rows  <DeleteIcon/></Button>

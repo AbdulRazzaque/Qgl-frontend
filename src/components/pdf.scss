@@ -23,7 +23,7 @@
   left: 180px;
 }
 .mylogo{
-  height: 86px;
+  height: 136px;
   position: relative;
   left: 100px;
   top: 25px;
@@ -52,8 +52,18 @@ margin-bottom: -14px;
 }
 
 .name{
-font-size: 26px;
+font-size: 20px;
 }
 .being{
 font-size: 26px;
+}
+.receiver{
+  position: relative;
+    bottom: 24px;
+
+}
+.printDate{
+  position: relative;
+    // top: 26px;
+    left: 41px;
 }

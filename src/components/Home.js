@@ -43,11 +43,11 @@ function Home() {
   const [data, setData] = React.useState([]);
   const [alert, setAlert] = useState(false);
   const [value, setValue] = React.useState("");
-  const [selectedDate, setSelectedDate] = React.useState();
+  const [selectedDate, setSelectedDate] = React.useState(dayjs());
   const [update, setUpdate] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
   const [updatedate, setupdatedate] = React.useState(dayjs());
-  const [updateMicrochip, setupdateMicrochip] = React.useState(dayjs());
+  const [updateMicrochip, setupdateMicrochip] = React.useState();
   const [owner, setOwner] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectowner, setSelectedOwner] = useState([]);
@@ -59,6 +59,7 @@ function Home() {
   const [inputValue, setInputValue] = useState('');
   const [count, setCount] = useState();
   const [selectedRows,setSelectedRows]= useState([])
+  const [error, setError] = useState(null);
   const history = useHistory();
   const url = process.env.REACT_APP_DEVELOPMENT;
   const columns = [
@@ -304,36 +305,34 @@ function Home() {
     console.log(row, "After clicking clickpritn icon");
   };
   // ------------------------------------------Membership owner code  api here -------------------------------------------------------------
-  const handleInputChange = (event, newInputValue) => {
+
+  const handleInputChange = async (event, newInputValue) => {
     setInputValue(newInputValue);
 
-    // Call the API with the input value
     if (newInputValue.length > 0) {
-      setLoading(true); // Set loading to true while fetching data
-      callApi(newInputValue);
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(`${url}/api/autocompleteMembers?q=${newInputValue}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setOwner(data);
+      } catch (error) {
+        console.error('Error calling API:', error);
+        setError('An error occurred while fetching data');
+      } finally {
+        setLoading(false);
+      }
     } else {
-      // Clear results if input is empty
       setOwner([]);
       setLoading(false);
+      setError(null);
     }
   };
 
-  const callApi = async (input) => {
-    // Replace 'YOUR_API_ENDPOINT' with the actual API endpoint
-    const apiEndpoint = `${url}/api/getmembers`;
-
-    try {
-      const response = await fetch(`${apiEndpoint}?query=${input}`);
-      const data = await response.json();
-
-      // Handle the API response
-      setOwner(data);
-    } catch (error) {
-      console.error('Error calling API:', error);
-    } finally {
-      setLoading(false); // Set loading to false once data is fetched
-    }
-  };
   useEffect(() => {
     alldata();
     deleteRow();
@@ -455,7 +454,8 @@ const handleDeleteRow = async (selectedRows) => {
                             name="date"
                             sx={{ width: 230 }}
                             label="Date"
-                            value={updatedate}
+                            format="DD/MM/YYYY"
+                            value={dayjs(update.date)}
                             onChange={(newValue) => {
                               setupdatedate(newValue);
                             }}
@@ -576,10 +576,13 @@ const handleDeleteRow = async (selectedRows) => {
                             name="microchip"
                             sx={{ width: 500 }}
                             label="Date of Microchip implementation"
-                            value={updateMicrochip}
+                            // value={updateMicrochip}
+                            format="DD/MM/YYYY"
+                            value={update.microchip ? dayjs(update.microchip):''}
                             onChange={(newValue) => {
                               setupdateMicrochip(newValue);
                             }}
+                            // onChange={updateData}
                             renderInput={(params) => (
                               <TextField name="date" {...params} />
                             )}
@@ -646,7 +649,7 @@ const handleDeleteRow = async (selectedRows) => {
             </div>
             <div className="row my-3 ">
               <div className="col ">
-        <Autocomplete
+     <Autocomplete
       disablePortal
       id="combo-box-demo"
       options={owner}
@@ -654,11 +657,11 @@ const handleDeleteRow = async (selectedRows) => {
         setSelectedMemberNo(newValue);
       }}
       getOptionLabel={(ownerName) =>
-        ` ${ownerName.membershipno} ${ownerName.ownername} `
+        `${ownerName.membershipno} ${ownerName.ownername}`
       }
       inputValue={inputValue}
       onInputChange={handleInputChange}
-      loading={loading} // Use the loading prop to indicate loading state
+      loading={loading}
       sx={{ width: 500 }}
       renderInput={(params) => (
         <TextField
@@ -791,6 +794,7 @@ const handleDeleteRow = async (selectedRows) => {
                     sx={{ width: 500 }}
                     label="Date of Microchip implementation"
                     value={microchip}
+                    format="DD/MM/YYYY"
                     onChange={(newValue) => {
                       setMicrochip(newValue);
                     }}

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import './pdf.scss'
 import axios from 'axios';
 import moment from 'moment'
@@ -9,20 +9,25 @@ import GENETICCENTER from '../images/GENETIC CENTER.png'
 import FOOTER from '../images/FOOTER.png'
 import COMMITTEELOGO from '../images/COMMITTEE LOGO.jpg'
 const Receiptpdf = (props) => {
+  const [currentDateTime,setCurrentDateTime]=useState(moment())
   console.log('props:', props); // Add this line
   const locationData = props.location.state?.data;
   console.log('locationData:', locationData); // Add this line
  
 console.log(locationData)
 React.useEffect(()=>{
-  setTimeout(() => {
-    window.print();            
+  const timeoutId = setTimeout(() => {
+    setCurrentDateTime(moment()) ;        
+    window.print();   
 }, 1000);
+//Cleare the timeout when the componet unouts to prevet memory
+return ()=>clearTimeout(timeoutId)
 },[])
   return (
     <>
      {locationData && (
      <div className="">
+   
   <div className='row mx-auto'>
     <div className='col-4'>
   <img src={FIRSTLAB} alt="Logo" className='mylogo' />
@@ -35,7 +40,7 @@ React.useEffect(()=>{
     <div className='col-4'>
  {
   // (locationData.category === "Committee"?  <img src={COMMITTEELOGO} alt="Logo" className='mylogo' />:"")
-  (locationData.category === "Committee" || locationData.category === "Blood parasite" ?  <img src={COMMITTEELOGO} alt="Logo" className='mylogo' />:"")
+  (locationData.category === "Committee"  ?  <img src={COMMITTEELOGO} alt="Logo" className='mylogo' />:"")
 } 
  
   
@@ -70,7 +75,10 @@ React.useEffect(()=>{
 </div>
   </div>
   <div class="col-auto">
-  <h3 className='key'>Date: <span className='value'>{new Date(locationData.date).toLocaleDateString('en-US')}</span>
+  {/* <h3 className='key'>Date: <span className='value'>{new Date(locationData.date).toLocaleDateString('en-US')}</span> */}
+  <h3 className='key'>
+  Date: <span className='value'>{new Date(locationData.date).toLocaleDateString('en-GB')}</span>
+
 
 </h3> 
 
@@ -126,7 +134,7 @@ React.useEffect(()=>{
     <h3 className='key'>Being for</h3> 
     </div>
     <div class="col-4 my-2 dark-border border-top-0 border-left-0 border-right-0">
-    <span className='being'>{locationData.being}</span> 
+    <span className='value'>{locationData.being}</span> 
     </div>
     <div class="col-3 my-2">
     <h3 className='key'>ذلك عن</h3> 
@@ -136,7 +144,7 @@ React.useEffect(()=>{
     <h3 className='key'>Telephone</h3> 
     </div>
     <div class="col-4 my-2 dark-border border-top-0 border-left-0 border-right-0">
-    <span className='being'>{locationData.telephone}</span> 
+    <span className='value'>{locationData.telephone}</span> 
     </div>
     <div class="col-3 my-2">
     <h3 className='key'>هاتف</h3> 
@@ -148,7 +156,9 @@ React.useEffect(()=>{
     <div class="col-4 my-2 dark-border border-top-0 border-left-0 border-right-0">
     <span className='value'>
       {locationData.microchip && !isNaN  (new Date(locationData.microchip))? 
-    new Date(locationData.microchip).toLocaleDateString('en-Us'):""}</span> 
+    // new Date(locationData.microchip).toLocaleDateString('en-Us')
+    new Date(locationData.microchip).toLocaleDateString('en-GB'):""}
+    </span> 
     </div>
     <div class="col-3 my-2">
     <h3 className='key'>تاريخ الترصيص</h3> 
@@ -161,21 +171,22 @@ React.useEffect(()=>{
 
 
 </div>
-<div className='container sign mt-3'>
+<div className='container sign '>
 <div className='row'>
-<div className='col-6 '>
-<h3 className='key'>تو قيع المستلم</h3> 
-  <h3 className='key '> Receiver Sign</h3> 
-</div>
 <div className='col-6'>
-  <h3 className='key '>تو قيع المحاسب</h3> 
-  <h3 className='key '> Accountant Sign</h3> 
+<h3 className='key'>توقيع المستلم</h3> 
+  <h3 className='key receiver'> Receiver Sign</h3> 
+</div>
+<div className='col-6 mb-0'>
+  <h3 className='key '>توقيع المحاسب</h3> 
+  <h3 className='key receiver '> Accountant Sign</h3> 
 </div>
 </div>
 </div>
-<div className='mt-5'>
+<div className='mt-0'>
   <img src={FOOTER} alt='footer'/>
 </div>
+  <span className='printDate'>Issue Date: {currentDateTime.format("DD/MM/YYYY h:mm A")}</span>
 
       </div>
        )}

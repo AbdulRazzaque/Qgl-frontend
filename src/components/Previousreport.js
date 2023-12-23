@@ -40,17 +40,18 @@ function Previousreport() {
  
   const columns = [
     { field: 'id', title: 'ID', width: 50 },
-    { field: 'doc', title: 'Doc', width: 50 },
+    { field: 'doc', title: 'Doc', width: 50, customExport: (dataExport) => dataExport.toString() },
     // { field: 'date', title: 'Date', width: 130 },
     {field: "date",title: "Date",width: 130, type:'date',render:(rowData)=>moment(rowData.date).format("DD/MM/YYYY")},
-    { field: 'name', title: 'Name', width: 130 },
+    { field: 'name', title: 'Name', width: 130 ,cellStyle: { direction: 'rtl' }  },
     { field: 'amount', title: 'Amount', width: 100 },
     { field: 'membership', title: 'Membership', width: 100 },
+    { field: 'telephone', title: 'TelePhone', width: 100 },
     { field: 'cash', title: 'Payment Method', width: 100 },
     { field: 'being', title: 'Being', width: 100 },
     { field: 'category', title: 'category', width: 100 },
     // {title: "Microchip ",field: "microchip",width: 150,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
-    {field: "microchip",title: "Microchip", type:'date',width: 150,render:(rowData)=>moment(rowData.microchip).format("DD/MM/YYYY")},
+    {field: "microchip",title: "Microchip", type:'date',width: 150,render:(rowData)=>rowData.microchip? moment(rowData.microchip).format("DD/MM/YYYY"):""},
     { 
       title: 'Actions',
       field: 'actions',
@@ -153,7 +154,9 @@ function Previousreport() {
             // setData(response.data)
             let arr = response.data.map((item,index) =>({
               ...item,
+              doc: `\u200B${item.doc}`,
               id:index +1,
+             
             }));
             setData(arr)
           })
@@ -162,6 +165,7 @@ function Previousreport() {
           
         }
       }
+
 
 useEffect(()=>{
   alldata()
@@ -279,10 +283,11 @@ const handleRowClick=(event,rowData)=>{
                   // Adjust the padding value as needed
                     sx={{ width: 230 }}
                     label="Date"
-                    value={updatedate}
+                    value={dayjs(update.date)}
                       onChange={(newValue) => {
                         setupdatedate(newValue);
                       }}
+                      format ="DD/MM/YYYY"
                     renderInput={(params) => (
                       <TextField name="date" {...params}      />
                     )}
@@ -299,6 +304,20 @@ const handleRowClick=(event,rowData)=>{
               id="name"
               name="name"
               value={update.name}
+              onChange={updateData}
+              required
+            />
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="mb-3">
+            <label for="name" class="form-label">Tele Phone</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              name="name"
+              value={update.telephone}
               onChange={updateData}
               required
             />
@@ -384,8 +403,9 @@ const handleRowClick=(event,rowData)=>{
                   <DatePicker
                   name="date"
                     sx={{ width: 500 }}
+                    format="DD/MM/YYYY"
                     label="Date of Microchip implementation"
-                    value={updateMicrochip}
+                    value={update.microchip?dayjs(update.microchip):""}
                       onChange={(newValue) => {
                         setupdateMicrochip(newValue);
                       }}

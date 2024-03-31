@@ -440,7 +440,7 @@ const handleRowClick=(event,rowData)=>{
             <section>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DesktopDatePicker
-                  label="To"
+                  label="From"
                   inputFormat="dd/MM/yyyy"
                   value={value}
                   onChange={(newValue) => {
@@ -454,7 +454,7 @@ const handleRowClick=(event,rowData)=>{
             <section>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DesktopDatePicker
-                  label="From"
+                  label="To"
                   inputFormat="dd/MM/yyyy"
                   value={value1}
                   onChange={(newValue) => {

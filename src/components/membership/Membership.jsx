@@ -458,7 +458,7 @@ const handleExport = () => {
                 id="form4Example6"
                 placeholder="Please Enter Extra Telephone"
                 className="form-control p-4"
-                {...register('extratelelphone', { required: true })}
+                {...register('extratelelphone')}
               />
               <label className="form-label" htmlFor="form4Example6">
                 Extra Telephone
@@ -500,6 +500,7 @@ const handleExport = () => {
       data={data}       
      onRowClick={(event,rowData)=>handleRowClick(event,rowData)}
       options={{
+
         headerStyle: {
           fontWeight: 'bold',
         },

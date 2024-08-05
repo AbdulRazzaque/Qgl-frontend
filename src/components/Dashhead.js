@@ -15,6 +15,7 @@ import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import CardMembershipIcon from '@mui/icons-material/CardMembership';
 import LogoutIcon from '@mui/icons-material/Logout';
 import InfoIcon from "@mui/icons-material/Info";
+import SummarizeIcon from '@mui/icons-material/Summarize';
 const Dashhead = (props) => {
   console.log(props);
   let { id, display } = props;
@@ -36,24 +37,6 @@ const Dashhead = (props) => {
         </div>
       )}
 
-     
-      {id === 3 ? (
-        <div className="menu-container-active">
-          <p onClick={() => props.history.push("Membership")}>
-            <CardMembershipIcon /> MemberShip Form
-          </p>
-        </div>
-      ) : (
-        <div
-          className="menu-container"
-          onClick={() => props.history.push("Membership")}
-        >
-          <p>
-            <CardMembershipIcon />  MemberShip Form
-          </p>
-        </div>
-      )}
-
 {id === 2 ? (
         <div className="menu-container-active">
           <p onClick={() => props.history.push("Previousreport")}>
@@ -70,7 +53,45 @@ const Dashhead = (props) => {
           </p>
         </div>
       )}
+
+{id === 3 ? (
+        <div className="menu-container-active">
+          <p onClick={() => props.history.push("Monthlyreport")}>
+            <SummarizeIcon /> Monthly Details
+          </p>
+        </div>
+      ) : (
+        <div
+          className="menu-container"
+          onClick={() => props.history.push("Monthlyreport")}
+        >
+          <p>
+            <SummarizeIcon /> Monthly Details
+          </p>
+        </div>
+      )}
+      
+
+
       {id === 4 ? (
+        <div className="menu-container-active">
+          <p onClick={() => props.history.push("Membership")}>
+            <CardMembershipIcon /> MemberShip Form
+          </p>
+        </div>
+      ) : (
+        <div
+          className="menu-container"
+          onClick={() => props.history.push("Membership")}
+        >
+          <p>
+            <CardMembershipIcon />  MemberShip Form
+          </p>
+        </div>
+      )}
+
+
+      {id === 5 ? (
         <div className="menu-container-active">
           <p onClick={() => props.history.push("/")}>
             <ControlPointIcon /> Log Out

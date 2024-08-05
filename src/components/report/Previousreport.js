@@ -1,8 +1,9 @@
 import React, { Fragment, useEffect, useState } from "react";
-import "./Home.scss";
+// import "./Home.scss";
+import './report.scss'
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import Dashhead from "./Dashhead";
+import Dashhead from "../Dashhead";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Autocomplete, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Pagination, Paper, Stack, TextField } from "@mui/material";
 import { DatePicker, DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -17,7 +18,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import moment from "moment";
 import dayjs from "dayjs";
 import date from "date-and-time";
-import Receiptpdf from "./Receiptpdf";
+import Receiptpdf from "../Receiptpdf";
 import MaterialTable, { MTableToolbar } from "material-table";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import idLocale from 'date-fns/locale/id';
@@ -204,7 +205,10 @@ const handleRowClick=(event,rowData)=>{
 
 
     return (
-        <div className="row">
+      <div className="page-container">
+
+  
+        <div className="row ">
             <div className="col-xs-12 col-sm-12 col-md-2 col-lg-2 col-xl-2">
             <Dashhead id={2} display={display} />
             </div>
@@ -217,7 +221,7 @@ const handleRowClick=(event,rowData)=>{
              </span>
 
                 <h1 className='title text-center my-5'>Previous Details</h1>
-                <div style={{ height: 400, width: '100%' }}>
+                <div >
 
                 <Container>
    
@@ -437,7 +441,7 @@ const handleRowClick=(event,rowData)=>{
             {/* <TextField type="Date" sx={{width:200}} id="outlined-basic" label="" variant="outlined"  /> */}
             {/* <TextField type="Date"  format="yyyy-MM-dd HH:mm:ss" sx={{width:200}} id="outlined-basic" label="" variant="outlined"  /> */}
 
-            <section>
+            <section >
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DesktopDatePicker
                   label="From"
@@ -468,20 +472,23 @@ const handleRowClick=(event,rowData)=>{
             <button type="submit" class="btn btn-primary" >submit</button>
           </Stack>
             </form>
-          <div>
-          <Paper>
+          <div className="" >
+          <Paper >
   <MaterialTable
       title="Previous Details"
       columns={columns}
       data={data}       
      onRowClick={(event,rowData)=>handleRowClick(event,rowData)}
       options={{
+        maxBodyHeight: '500px', // Adjust height as needed
+        maxBodyWidth: '600px', // Adjust width as needed
         headerStyle: {
           fontWeight: 'bold',
         },
         exportButton: true,
-        pageSize: 50, // Set the initial page size to 100
-        pageSizeOptions: [100,300,400], // Provide an array of possible page sizes
+        pageSize: 500, // Set the initial page size to 100
+        pageSizeOptions: [1000,3000,4000], // Provide an array of possible page sizes
+        // paging: false, // Disable pagination
         search: true,
         filtering:true
       }}
@@ -496,6 +503,7 @@ const handleRowClick=(event,rowData)=>{
 
 
              </div>
+    </div>
     </div>
     )
 }

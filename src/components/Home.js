@@ -35,7 +35,7 @@ import date from "date-and-time";
 import FormControl from "@mui/material/FormControl";
 import Receiptpdf from "./Receiptpdf";
 import _ from "lodash";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 function Home() {
@@ -135,9 +135,13 @@ function Home() {
     reset,
     formState: { isSubmitting },
   } = useForm();
+  const location = useLocation();
+
+
   const onSubmit = async (data, action) => {
     if (action === "save") {
       var obj = {
+        userName:location.state.name,
         date: selectedDate,
         membership: selectmemberno.membershipno,
         name: selectmemberno.ownername,

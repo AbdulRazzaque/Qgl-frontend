@@ -187,6 +187,7 @@ return ()=>clearTimeout(timeoutId)
   <img src={FOOTER} alt='footer'/>
 </div>
   <span className='printDate'>Issue Date: {currentDateTime.format("DD/MM/YYYY h:mm A")}</span>
+  <span className='printDate mx-5'>User: {locationData.userName}</span>
 
       </div>
        )}

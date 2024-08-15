@@ -87,7 +87,8 @@ const Signup = () => {
       headers:{token:`${accessToken}`}
     }).then(response=>{
       console.log(response,'res')
-      history.push('/Home');
+      history.push({pathname:'/Home',state:data,});
+      
     }).catch(error=>{
       toast(error.response.data.message,{
         position: "top-right",

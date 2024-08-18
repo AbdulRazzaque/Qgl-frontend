@@ -4,6 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Dashhead from "./Dashhead";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
 import {
   Autocomplete,
   Button,
@@ -59,6 +60,7 @@ function Home() {
   const [inputValue, setInputValue] = useState('');
   const [count, setCount] = useState();
   const [selectedRows,setSelectedRows]= useState([])
+  const [selectedData,setSelectedData]= useState([])
   const [error, setError] = useState(null);
   const history = useHistory();
   const url = process.env.REACT_APP_DEVELOPMENT;
@@ -113,18 +115,18 @@ function Home() {
         </Fragment>
       ),
     },
-    {
-      title: "Print",
-      field: "Print",
-      width: 100,
-      renderCell: (params) => (
-        <Fragment>
-          <Button color="success" onClick={() => clickPrintIcon(params.row)}>
-            <PrintIcon />
-          </Button>
-        </Fragment>
-      ),
-    },
+    // {
+    //   title: "Print",
+    //   field: "Print",
+    //   width: 100,
+    //   renderCell: (params) => (
+    //     <Fragment>
+    //       <Button color="success" onClick={() => clickPrintIcon(params.row)}>
+    //         <PrintIcon />
+    //       </Button>
+    //     </Fragment>
+    //   ),
+    // },
   ];
 
   // ------------------------------------------Post api here -------------------------------------------------------------
@@ -303,11 +305,19 @@ function Home() {
 
   // ------------------------------------------Click print  api here -------------------------------------------------------------
 
-  const clickPrintIcon = (row) => {
-    // setprintData(row)
-    history.push("/Receiptpdf", { data: row });
-    console.log(row, "After clicking clickpritn icon");
+  const clickPrintIcon = () => {
+      history.push("/Receiptpdf",{ data:selectedData});
   };
+  // ------------------------------------------Mulitplel print functionaltiy -------------------------------------------------------------
+  const handleSelectionModelChange = (ids) => {
+    // Filter data based on selected IDs
+    const selecterowdData = data.filter(row => ids.includes(row._id));
+    setSelectedData(selecterowdData);
+    setSelectedRows(ids);
+    console.log(selectedData,"Data"); // Logs the selected row data
+    console.log(selectedRows,"row"); // Logs the selected row data
+  
+}
   // ------------------------------------------Membership owner code  api here -------------------------------------------------------------
 
   const handleInputChange = async (event, newInputValue) => {
@@ -359,7 +369,7 @@ const handleDeleteRow = async (selectedRows) => {
 };
 
 // ====*******************************************************************************End*************************************************************************************************************************************************************
-  console.log(doc, "this is Doc NO"); 
+  // console.log(doc, "this is Doc NO"); 
   return (
     <div className="row">
       <div className="col-xs-12 col-sm-12 col-md-2 col-lg-2 col-xl-2">
@@ -846,7 +856,11 @@ const handleDeleteRow = async (selectedRows) => {
             </Button> */}
           </div>
         </div>
-        <Button variant="contained" color="error" onClick={() => setAlert(true)}> Delete Rows  <DeleteIcon/></Button>
+        <div className="my-3">
+        <Button variant="contained" color="error"  disabled={selectedRows.length === 0} onClick={() => setAlert(true)}> Delete Rows  <DeleteIcon/></Button>
+        <Button variant="contained" color="success" disabled={selectedData.length === 0} className="mx-5" onClick={() => clickPrintIcon()}> select Pritn <LibraryAddCheckIcon className="mx-2"/></Button>
+        </div>
+
         <div style={{ height: 400, width: "100%" }}>
           <DataGrid
             rows={data}
@@ -860,9 +874,7 @@ const handleDeleteRow = async (selectedRows) => {
             onRowClick={(item) => setUpdate(item.row)}
             checkboxSelection
             getRowId={(row)=>row._id}
-            onSelectionModelChange={(ids)=>{
-              setSelectedRows(ids)
-            }}
+            onSelectionModelChange={handleSelectionModelChange}
             
           />
         </div>

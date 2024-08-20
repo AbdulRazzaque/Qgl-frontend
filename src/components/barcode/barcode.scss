@@ -1,0 +1,35 @@
+@media print{
+    body{
+        height: 90%;
+    }
+  
+    @page {
+        size: a5 landscape;
+    }
+}
+
+.main{
+    border: solid 3px black;
+    width: 400px;
+    // margin: 50px;
+    // margin-left: 34px;
+    margin-top: 42px;
+    padding: 15px;
+
+}
+
+
+.barcodBox{
+    display: flex;
+}
+.barcodeText{
+    margin-left: 34px;
+    font-family: Arial, sans-serif;
+   
+
+}
+
+.barcode_image{
+    margin-left: 60px;
+    margin-top: auto;
+}

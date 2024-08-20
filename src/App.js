@@ -7,7 +7,7 @@ import Signup from './components/login/Signup';
 import Membership from './components/membership/Membership';
 import Monthlyreport from './components/report/Monthlyreport';
 import Previousreport from './components/report/Previousreport';
-
+import Barcode from './components/barcode/Barcode';
 
 function App() {
   return (
@@ -18,6 +18,7 @@ function App() {
       <Route exact path="/Previousreport" component={Previousreport} />
       <Route exact path="/Monthlyreport" component={Monthlyreport} />
       <Route exact path="/Receiptpdf" component={Receiptpdf} />
+      <Route exact path="/Barcode" component={Barcode} />
     </Switch>
   );
 }

@@ -5,6 +5,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Dashhead from "./Dashhead";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
+import Barcode from "./barcode/Barcode";
 import {
   Autocomplete,
   Button,
@@ -39,6 +41,7 @@ import _ from "lodash";
 import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import crypto from 'crypto';
 function Home() {
   const [display, setDisplay] = React.useState(false);
   const [data, setData] = React.useState([]);
@@ -64,6 +67,13 @@ function Home() {
   const [error, setError] = useState(null);
   const history = useHistory();
   const url = process.env.REACT_APP_DEVELOPMENT;
+
+  const handleBarcodeClick = () => {
+    if (selectedRows) {
+        history.push('/Barcode',{data:selectedData});
+    }
+};
+
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
     { field: "doc", headerName: "Doc", width: 80 },
@@ -73,7 +83,7 @@ function Home() {
       field: "date",
       width: 130,
       renderCell: (param) =>
-        moment.parseZone(param.value).local().format("DD/MM/YYYY"),
+      moment.parseZone(param.value).local().format("DD/MM/YYYY"),
     },
     { field: "name", headerName: "Name", width: 150 },
     { field: "membership", headerName: "Membership", width: 130 },
@@ -90,6 +100,8 @@ function Home() {
         // moment.parseZone(param.value !== null ?.local().format("DD/MM/YYYY") :"" ),
         valueGetter:(param)=>param.row.microchip ? moment.parseZone(param.row.microchip).local().format("DD/MM/YYYY"):""
     },
+    { field: 'name', headerName: 'Name', width: 150 },
+    
  
     {
       title: "Action",
@@ -857,8 +869,9 @@ const handleDeleteRow = async (selectedRows) => {
           </div>
         </div>
         <div className="my-3">
-        <Button variant="contained" color="error"  disabled={selectedRows.length === 0} onClick={() => setAlert(true)}> Delete Rows  <DeleteIcon/></Button>
+        {/* <Button variant="contained" color="error"  disabled={selectedRows.length === 0} onClick={() => setAlert(true)}> Delete Rows  <DeleteIcon/></Button> */}
         <Button variant="contained" color="success" disabled={selectedData.length === 0} className="mx-5" onClick={() => clickPrintIcon()}> select Pritn <LibraryAddCheckIcon className="mx-2"/></Button>
+        <Button variant="contained" disabled={selectedData.length === 0} className="" onClick={handleBarcodeClick}> select Barcode <QrCode2Icon className="mx-2"/></Button>
         </div>
 
         <div style={{ height: 400, width: "100%" }}>

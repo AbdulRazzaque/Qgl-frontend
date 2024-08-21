@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Dashhead.scss";
 import { withRouter } from "react-router";
 import HomeIcon from "@mui/icons-material/Home";
@@ -16,11 +16,21 @@ import CardMembershipIcon from '@mui/icons-material/CardMembership';
 import LogoutIcon from '@mui/icons-material/Logout';
 import InfoIcon from "@mui/icons-material/Info";
 import SummarizeIcon from '@mui/icons-material/Summarize';
+import { Button } from "@mui/material";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 const Dashhead = (props) => {
   console.log(props);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const history = useHistory();
+  const logout = () => {
+    sessionStorage.removeItem('accessToken');
+    setIsAuthenticated(false);
+    history.push('/');
+  };
   let { id, display } = props;
+  
   return (
-    <div className={display ? "shadow-lg dashhead" : "dashhead displayhidden"}>
+    <div   className={display ? "shadow-lg dashhead" : "dashhead displayhidden min-vh-100 "}id="sidebar-wrapper">
       <h1>QGL</h1>
 
       {id === 1 ? (
@@ -90,22 +100,14 @@ const Dashhead = (props) => {
         </div>
       )}
 
-
-      {id === 5 ? (
-        <div className="menu-container-active">
-          <p onClick={() => props.history.push("/")}>
-            <ControlPointIcon /> Log Out
-          </p>
+<div className="sticky-bottom fixed-bottom ml-1 mb-1 bt">
+       <button className="btn btn-danger"  style={{ width: "14%" }} onClick={logout}>
+            Logout <LogoutIcon className="mx-3"  />
+          </button>
         </div>
-      ) : (
-        <div className="menu-container" onClick={() => props.history.push("/")}>
-          <p>
-            <LogoutIcon /> Log Out
-          </p>
-        </div>
-      )}
 
     </div>
+    
   );
 };
 

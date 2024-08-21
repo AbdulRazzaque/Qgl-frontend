@@ -74,72 +74,7 @@ function Home() {
     }
 };
 
-  const columns = [
-    { field: "id", headerName: "ID", width: 50 },
-    { field: "doc", headerName: "Doc", width: 80 },
-    // { field: 'date', headerName: 'Date', width: 130 },
-    {
-      headerName: "Date",
-      field: "date",
-      width: 130,
-      renderCell: (param) =>
-      moment.parseZone(param.value).local().format("DD/MM/YYYY"),
-    },
-    { field: "name", headerName: "Name", width: 150 },
-    { field: "membership", headerName: "Membership", width: 130 },
-    { field: "telephone", headerName: "Tele Phone", width: 130 },
-    { field: "amount", headerName: "Amount", width: 100 },
-    { field: "cash", headerName: "Payment Method", width: 130 },
-    { field: "being", headerName: "Being", width: 130 },
-    { field: "category", headerName: "Category", width: 130 },
-    {
-      headerName: "Microchip ",
-      field: "microchip",
-      width: 150,
-      // valueGetter: (param) =>
-        // moment.parseZone(param.value !== null ?.local().format("DD/MM/YYYY") :"" ),
-        valueGetter:(param)=>param.row.microchip ? moment.parseZone(param.row.microchip).local().format("DD/MM/YYYY"):""
-    },
-    { field: 'name', headerName: 'Name', width: 150 },
-    
- 
-    {
-      title: "Action",
-      field: "Action",
-      width: 100,
-      renderCell: () => (
-        <Fragment>
-          <Button onClick={() => setShowDialog(true)}>
-            <EditIcon />
-          </Button>
-        </Fragment>
-      ),
-    },
-    {
-      title: "Delete",
-      field: "Delete",
-      width: 100,
-      renderCell: () => (
-        <Fragment>
-          <Button color="error" onClick={() => setAlert(true)}>
-            <DeleteIcon />
-          </Button>
-        </Fragment>
-      ),
-    },
-    // {
-    //   title: "Print",
-    //   field: "Print",
-    //   width: 100,
-    //   renderCell: (params) => (
-    //     <Fragment>
-    //       <Button color="success" onClick={() => clickPrintIcon(params.row)}>
-    //         <PrintIcon />
-    //       </Button>
-    //     </Fragment>
-    //   ),
-    // },
-  ];
+
 
   // ------------------------------------------Post api here -------------------------------------------------------------
 
@@ -147,7 +82,7 @@ function Home() {
     register,
     handleSubmit,
     reset,
-    formState: { isSubmitting },
+    formState:  { errors },
   } = useForm();
   const location = useLocation();
 
@@ -155,11 +90,11 @@ function Home() {
   const onSubmit = async (data, action) => {
     if (action === "save") {
       var obj = {
-        userName:location.state.name,
+        userName:location?.state?.name,
         date: selectedDate,
-        membership: selectmemberno.membershipno,
-        name: selectmemberno.ownername,
-        telephone: selectmemberno.telephone,
+        membership: selectmemberno?.membershipno,
+        name: selectmemberno?.ownername,
+        telephone: selectmemberno?.telephone,
         microchip: microchip,
         category: category,
         duplicate: duplicate,
@@ -173,6 +108,17 @@ function Home() {
             // setCount(count + 1);
             // setCount((prevCount) => prevCount + 1);
             console.log( obj,"Data saved successfully");
+            toast.success('Data added successfully', {
+              position: "top-center",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+              });
             reset();
           })
           .catch((error) => {
@@ -209,6 +155,7 @@ function Home() {
           .then((response) => {
             // setCount((prevCount) => prevCount + 1);
             history.push("/Receiptpdf", { data: combinedObj });
+          
             reset();
           })
           .catch((error) => {
@@ -298,6 +245,7 @@ function Home() {
   // console.log(data,'here i am cheack the data')
 
   // ------------------------------------------Delete api here -------------------------------------------------------------
+
   const deleteRow = async (update) => {
     try {
       await axios
@@ -361,7 +309,7 @@ function Home() {
 
   useEffect(() => {
     alldata();
-    deleteRow();
+    // deleteRow();
   }, []);
 // ====================================================================Category select Code Here ======================================
   const handleChange = (event) => {
@@ -379,6 +327,75 @@ const handleDeleteRow = async (selectedRows) => {
     console.log(error);
   }
 };
+
+// ======================================Data Grid Cloumn=================================================================
+
+const columns = [
+  { field: "id", headerName: "ID", width: 50 },
+  { field: "doc", headerName: "Doc", width: 80 },
+  // { field: 'date', headerName: 'Date', width: 130 },
+  {
+    headerName: "Date",
+    field: "date",
+    width: 130,
+    renderCell: (param) =>
+    moment.parseZone(param.value).local().format("DD/MM/YYYY"),
+  },
+  { field: "name", headerName: "Name", width: 150 },
+  { field: "membership", headerName: "Membership", width: 130 },
+  { field: "telephone", headerName: "Tele Phone", width: 130 },
+  { field: "amount", headerName: "Amount", width: 100 },
+  { field: "cash", headerName: "Payment Method", width: 130 },
+  { field: "being", headerName: "Being", width: 130 },
+  { field: "category", headerName: "Category", width: 130 },
+  {
+    headerName: "Microchip ",
+    field: "microchip",
+    width: 150,
+    // valueGetter: (param) =>
+      // moment.parseZone(param.value !== null ?.local().format("DD/MM/YYYY") :"" ),
+      valueGetter:(param)=>param.row.microchip ? moment.parseZone(param.row.microchip).local().format("DD/MM/YYYY"):""
+  },
+  { field: 'name', headerName: 'Name', width: 150 },
+  
+
+  {
+    title: "Action",
+    field: "Action",
+    width: 100,
+    renderCell: () => (
+      <Fragment>
+        <Button onClick={() => setShowDialog(true)}>
+          <EditIcon />
+        </Button>
+      </Fragment>
+    ),
+  },
+  {
+    title: "Delete",
+    field: "Delete",
+    width: 100,
+    renderCell: () => (
+      <Fragment>
+        <Button color="error" onClick={() => setAlert(true)}>
+          <DeleteIcon />
+        </Button>
+      </Fragment>
+    ),
+  },
+  // {
+  //   title: "Print",
+  //   field: "Print",
+  //   width: 100,
+  //   renderCell: (params) => (
+  //     <Fragment>
+  //       <Button color="success" onClick={() => clickPrintIcon(params.row)}>
+  //         <PrintIcon />
+  //       </Button>
+  //     </Fragment>
+  //   ),
+  // },
+];
 
 // ====*******************************************************************************End*************************************************************************************************************************************************************
   // console.log(doc, "this is Doc NO"); 
@@ -542,7 +559,7 @@ const handleDeleteRow = async (selectedRows) => {
                           sx={{ width: 500 }}
                           label="The Amount Piad"
                           variant="outlined"
-                          type="number"
+                        
                           required
                           name="amount"
                           value={update.amount}
@@ -771,16 +788,21 @@ const handleDeleteRow = async (selectedRows) => {
             </div>
             <div className="row my-3 ">
               <div className="col ">
-                <TextField
-                  id="outlined-basic"
-                  sx={{ width: 500 }}
-                  label="The Amount Piad"
-                  variant="outlined"
-                  type="number"
-                  // {...register("amount")}
-                  required
-                  {...register("amount", { required: true })}
-                />
+              <TextField
+              id="outlined-basic"
+              sx={{ width: 500 }}
+              label="The Amount Paid"
+              variant="outlined"
+              required
+              inputProps={{ min: 1 }}
+              autoComplete="off"
+              {...register("amount", { required: true })}
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9]/g, ''); // Remove any non-numeric characters
+                e.target.value = value;
+              }}
+            />
+
               </div>
             </div>
             <div className="row my-3 ">
@@ -833,15 +855,25 @@ const handleDeleteRow = async (selectedRows) => {
             </div>
             <div className="row my-3 ">
               <div className="col ">
-                <TextField
-                  id="outlined-basic"
-                  sx={{ width: 230 }}
-                  label="Duplicate"
-                  variant="outlined"
-                  type="number"
-                  value={duplicate}
-                  onChange={(e) => setDuplicate(e.target.value)}
-                />
+              <TextField
+            id="outlined-basic"
+            sx={{ width: 230 }}
+            label="Duplicate"
+            variant="outlined"
+            required
+        {...register('duplicate', { required: "This field is required", min: 1 })}
+          error={!!errors.duplicate}
+          helperText={errors.duplicate ? errors.duplicate.message : ''}
+            value={duplicate}
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10);
+              if (value >= 1 || e.target.value === "") {
+                setDuplicate(e.target.value);
+              }
+            }}
+            inputProps={{ min: 1 }}
+            autoComplete="off"
+          />
               </div>
             </div>
             <Stack

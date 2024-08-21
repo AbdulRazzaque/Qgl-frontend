@@ -73,24 +73,64 @@ const useStyles = {
 };
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
-
-
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showLoginForm, setShowLoginForm] = useState(true);
  
   const history = useHistory();
   const url = process.env.REACT_APP_DEVELOPMENT;
-  const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTQ3NzdlNzEwZTA2OGZjODFjNDg1MjEiLCJpYXQiOjE2OTkzNTE4MjUsImV4cCI6MTczMDkwOTQyNX0.5VeraM1Lbr5Q5et-xTNYMi8JuAc05pAYuVKDahgL5YU"
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const onSubmit = async(data)=>{
-    try {
-    await axios.post(`${url}/api/login`,data,
-    {
-      headers:{token:`${accessToken}`}
-    }).then(response=>{
-      console.log(response,'res')
-      history.push({pathname:'/Home',state:data,});
+  // const onSubmit = async(data)=>{
+  //   try {
+  //   await axios.post(`${url}/api/login`,data,
+  //   {
+  //     headers:{token:`${accessToken}`}
+  //   }).then(response=>{
+  //     console.log(response,'res')
+  //     history.push({pathname:'/Home',state:data,});
       
-    }).catch(error=>{
-      toast(error.response.data.message,{
+  //   }).catch(error=>{
+  //     toast(error.response.data.message,{
+  //       position: "top-right",
+  //       autoClose: 5000,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //       theme: "light",
+  //     })
+  //   })
+  //   } catch (error) {
+  //     console.log(error)
+      
+  //   }
+  // }
+
+
+  const onSubmit = async (data) => {
+    try {
+      console.log(data, 'data');
+      
+      const res = await axios.post(`${process.env.REACT_APP_DEVELOPMENT}/api/login`, data);
+      console.log(res)
+      const accessToken = res.data.token;
+      console.log(accessToken, 'kkk');
+      console.log(res, 'res');
+  
+      if (accessToken) {
+        console.log(accessToken, 'acces');
+        sessionStorage.setItem('accessToken', accessToken);
+        setIsAuthenticated(true);
+        setShowLoginForm(false);
+        setTimeout(() => {
+          history.push({pathname:'/Home',state:data,});
+        }, 500);
+      } else {
+        throw new Error('Authentication failed');
+      }
+    } catch (error) {
+      console.log('Error:', error);
+      toast(error.response?.data.message || error.response.data.message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -99,13 +139,9 @@ const Signup = () => {
         draggable: true,
         progress: undefined,
         theme: "light",
-      })
-    })
-    } catch (error) {
-      console.log(error)
-      
+      });
     }
-  }
+  };
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -118,7 +154,9 @@ const Signup = () => {
     <div style={useStyles.container}>
    
       <CssBaseline />
-      <Container component="main" maxWidth="xs">
+      {showLoginForm ? (
+
+<Container component="main" maxWidth="xs">
         <Paper elevation={3} style={useStyles.formContainer}>
           <img src={logo} alt="Logo" style={useStyles.logo} />
           <Typography component="h1" variant="h4" style={useStyles.portal}>
@@ -186,6 +224,9 @@ const Signup = () => {
           </Link> */}
         </Paper>
       </Container>
+      ):""
+      }
+      
     </div>
     </>
   );

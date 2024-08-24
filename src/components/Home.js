@@ -605,7 +605,6 @@ const columns = [
                           sx={{ width: 500 }}
                           label="Being for"
                           variant="outlined"
-                          type="number"
                           name="being"
                           value={update.being}
                           onChange={updateData}
@@ -731,10 +730,7 @@ const columns = [
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  // value={supplierId}
-                  // onChange={(event, newValue) => {
-                  //   setSelectedOwner(newValue);
-                  // }}
+                   
                   disabled
                   getOptionLabel={(ownerName) => `${ownerName.ownername}`}
                   value={selectmemberno ? selectmemberno : { ownername: "" }}
@@ -751,10 +747,7 @@ const columns = [
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  // value={supplierId}
-                  // onChange={(event, newValue) => {
-                  //   setSelectedOwner(newValue);
-                  // }}
+                
                   disabled
                   getOptionLabel={(ownerName) => `${ownerName.telephone}`}
                   value={selectmemberno ? selectmemberno : { telephone: "" }}

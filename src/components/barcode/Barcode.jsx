@@ -8,12 +8,14 @@ function Barcode(props) {
 
     return (
         <div>
+        {/* {    console.log(locationData)} */}
             {locationData.map((item, index) => {
                 // Define the fields to include in the QR code with custom labels
                 const filteredData = {
-                    'owner name': item.name,
+                    'owner Name': item.name,
                     'Membership NO': item.membership,
                     'Receipt Voucher': item.doc,
+                    'User Name': item.userName,
                     'Date': moment.parseZone(item.date).local().format("DD/MM/YYYY")
                 };
 

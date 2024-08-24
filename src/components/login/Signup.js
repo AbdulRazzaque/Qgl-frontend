@@ -165,7 +165,7 @@ const Signup = () => {
           <Typography component="h1" variant="h4" style={useStyles.title}>
           مرحباً
           </Typography>
-          <form style={useStyles.form} onSubmit={handleSubmit(onSubmit)}>
+          <form style={useStyles.form} onSubmit={handleSubmit(onSubmit)} autoComplete="off">
             <TextField
               variant="outlined"
               margin="normal"
@@ -174,7 +174,7 @@ const Signup = () => {
               id="name"
               label="Name"
               name="name"
-              autoComplete="off"
+              autoComplete="on"
               autoFocus
               {...register("name")}
               InputProps={{
@@ -194,7 +194,8 @@ const Signup = () => {
               id="password"
               {...register("password")}
               // onChange={handlePasswordChange}
-              autoComplete="off"
+              autoComplete="off" // Try setting this to 'off' to disable autocomplete
+
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">

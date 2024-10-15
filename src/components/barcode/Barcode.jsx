@@ -15,8 +15,8 @@ function Barcode(props) {
                     'owner Name': item.name,
                     'Membership NO': item.membership,
                     'Receipt Voucher': item.doc,
+                    'Date': moment.parseZone(item.date).local().format("DD/MM/YYYY"),
                     'User Name': item.userName,
-                    'Date': moment.parseZone(item.date).local().format("DD/MM/YYYY")
                 };
 
                 return (

@@ -209,7 +209,9 @@ const deleteRow =async(update)=>{
     },
 
   ];
+  
 // ============================================Xl code export=================================================================================
+
 const handleExport = () => {
   const filteredData = data.map(item=>({membershipno:item.membershipno,ownername:item.ownername,nationalid:item.nationalid,nationality:item.nationality,telephone:item.telephone,extratelelphone:item.extratelelphone}))
   const worksheet = XLSX.utils.json_to_sheet(filteredData);

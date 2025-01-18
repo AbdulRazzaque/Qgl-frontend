@@ -8,28 +8,52 @@
     }
 }
 
+.heading_barcode{
+    font-size: 50px;
+    position: relative;
+    // left: 80px;
+
+
+}
+
 .main{
-    border: solid 3px black;
-    width: 400px;
+
+    h1, h2, h3, h4, h5, h6,p {
+        margin: 0; /* Resets all headings */
+    }
+    // border: solid 1px black;
+    width: 800px;
+
+    height: 570px;
     // margin: 50px;
     // margin-left: 34px;
-    margin-top: 42px;
-    padding: 15px;
+   
+    margin-top: 10px;
+    // padding: 15px;
+    page-break-inside: avoid; /* Prevents splitting inside a single barcode */
+    page-break-after: always; /* Forces each barcode to print on a new page */
 
 }
 
 
-.barcodBox{
-    display: flex;
-}
-.barcodeText{
-    margin-left: 34px;
-    font-family: Arial, sans-serif;
+// .barcodBox{
+//     display: flex;
+// }
+
+    .barcodeText {
+        margin-top: 28px;
+        margin-left: 90px;
+        font-family: Arial, sans-serif;
+    
    
 
 }
 
-.barcode_image{
-    margin-left: 60px;
-    margin-top: auto;
+.barcode_image {
+    position: relative;
+    /* top: -45px; */
+    /* top: -1px; */
+    /* right: 60px; */
+    left: 692px;
+    bottom: 173px;
 }

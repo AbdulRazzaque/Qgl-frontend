@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import QRCode from 'qrcode.react';
 import './barcode.scss';
 import moment from 'moment';
 
 function Barcode(props) {
     const locationData = props.location.state?.data || []; // Ensure locationData is not undefined
-
+useEffect(()=>{
+setTimeout(()=>{
+    window.print()
+},1000)
+},[])
+console.log(locationData,'this is locaticn Daata')
     return (
         <div>
         {/* {    console.log(locationData)} */}
@@ -20,7 +25,7 @@ function Barcode(props) {
                 };
 
                 return (
-                    <div key={index} className='main mx-5'>
+                    <div key={index} className='main mx-5 print-container'>
                         <div className='barcodBox'>
                             <div className='barcodeText'>
                                 <h4 className='heading_barcode'>
@@ -34,7 +39,7 @@ function Barcode(props) {
                             <div className='barcode_image'>
                                 <QRCode
                                     value={JSON.stringify(filteredData)}
-                                    size={80}
+                                    size={300}
                                     // level="H" // High error correction level
                 
                                 />

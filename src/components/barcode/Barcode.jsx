@@ -21,6 +21,7 @@ console.log(locationData,'this is locaticn Daata')
                     'Membership NO': item.membership,
                     'Receipt Voucher': item.doc,
                     'Date': moment.parseZone(item.date).local().format("DD/MM/YYYY"),
+                    "Tel": item.telephone,
                     'User Name': item.userName,
                 };
 

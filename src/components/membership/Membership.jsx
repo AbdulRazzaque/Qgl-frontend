@@ -331,7 +331,7 @@ const handleExport = () => {
           <div class="mb-3">
             <label for="membership" class="form-label">National Id</label>
             <input
-              type="number"
+              type="text"
               class="form-control"
               id="membership"
               name="nationalid"
@@ -430,7 +430,7 @@ const handleExport = () => {
 
             <div className="form-outline mb-4">
               <input
-                type="number"
+                type="text"
                 id="form4Example4"
                 placeholder="Please Enter Nationality Id"
                 className="form-control p-4"

@@ -10,6 +10,8 @@ setTimeout(()=>{
     window.print()
 },1000)
 },[])
+
+
 console.log(locationData,'this is locaticn Daata')
     return (
         <div>
@@ -17,12 +19,13 @@ console.log(locationData,'this is locaticn Daata')
             {locationData.map((item, index) => {
                 // Define the fields to include in the QR code with custom labels
                 const filteredData = {
-                    'owner Name': item.name,
-                    'Membership NO': item.membership,
-                    'Receipt Voucher': item.doc,
+                    'Owner': item.name,
+                    'Memb NO': item.membership,
+                    'Receipt': item.doc,
+                    'Amount': `${item.amount} QR`,
                     'Date': moment.parseZone(item.date).local().format("DD/MM/YYYY"),
                     "Tel": item.telephone,
-                    'User Name': item.userName,
+                    'User': item.userName,
                 };
 
                 return (
@@ -40,7 +43,7 @@ console.log(locationData,'this is locaticn Daata')
                             <div className='barcode_image'>
                                 <QRCode
                                     value={JSON.stringify(filteredData)}
-                                    size={300}
+                                    size={250}
                                     // level="H" // High error correction level
                 
                                 />

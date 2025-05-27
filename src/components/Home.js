@@ -41,7 +41,7 @@ import _ from "lodash";
 import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import crypto from 'crypto';
+
 function Home() {
   const [display, setDisplay] = React.useState(false);
   const [data, setData] = React.useState([]);
@@ -356,7 +356,7 @@ const columns = [
       // moment.parseZone(param.value !== null ?.local().format("DD/MM/YYYY") :"" ),
       valueGetter:(param)=>param.row.microchip ? moment.parseZone(param.row.microchip).local().format("DD/MM/YYYY"):""
   },
-  { field: 'name', headerName: 'Name', width: 150 },
+
   
 
   {

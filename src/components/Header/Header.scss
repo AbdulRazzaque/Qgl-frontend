@@ -1,4 +1,4 @@
-@import  "../../App.scss";
+@use  "../../App.scss";
 
 span{
     font-family: $secondary-font;
@@ -36,13 +36,13 @@ font-weight: 600;
  }
  .greenspanlight{
     background: -webkit-linear-gradient(#0d9c00, #006b14);
-    -webkit-background-clip: text;
+    // -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-family: $secondary-font;
  }
  .greenspanwhite{
     background: -webkit-linear-gradient(#ffffff, #d4d4d4);
-    -webkit-background-clip: text;
+    // -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-family: $secondary-font;
  }
@@ -51,8 +51,6 @@ font-weight: 600;
      font-family: $secondary-font;
  }
 
- #nav{
- }
 
  .logo{
      filter:contrast(1.5)

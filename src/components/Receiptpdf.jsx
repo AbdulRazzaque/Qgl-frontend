@@ -60,7 +60,7 @@ return ()=>clearTimeout(timeoutId)
     
     
       <div class="container center-print">
-     <div class="row my-3 justify-content-center align-items-center">
+     <div class="row my-3 justify-content-center align-items-center headerLeft">
    
      <div class="col-auto">
      <h3 className='key'> No : <span className='value'>{locationData.doc}</span> </h3> 
@@ -82,6 +82,18 @@ return ()=>clearTimeout(timeoutId)
      {/* <h3 className='key'>Date: <span className='value'>{new Date(locationData.date).toLocaleDateString('en-US')}</span> */}
      <h3 className='key'>
      Date: <span className='value'>{new Date(locationData.date).toLocaleDateString('en-GB')}</span>
+   
+   
+   </h3> 
+   
+   
+    
+     </div>
+     <div class="col-auto">
+     {/* <h3 className='key'>Date: <span className='value'>{new Date(locationData.date).toLocaleDateString('en-US')}</span> */}
+     <h3 className='key'>
+     Expiry Date: <span className='value'>  {new Date(new Date(locationData.date).setMonth(new Date(locationData.date).getMonth() + 1))
+    .toLocaleDateString('en-GB')}</span>
    
    
    </h3> 

@@ -18,7 +18,7 @@ import moment from "moment";
 import dayjs from "dayjs";
 import date from "date-and-time";
 import Receiptpdf from "../Receiptpdf";
-import MaterialTable, { MTableToolbar } from "material-table";
+import MaterialTable from 'material-table';
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import idLocale from 'date-fns/locale/id';
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";

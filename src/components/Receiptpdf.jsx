@@ -11,10 +11,10 @@ import COMMITTEELOGO from '../images/COMMITTEE LOGO.jpg'
 const Receiptpdf = (props) => {
   const [currentDateTime,setCurrentDateTime]=useState(moment())
   console.log('props:', props); // Add this line
-  const locationData = props.location.state?.data;
-  console.log('locationData:', locationData.map((item)=>{
-    console.log(item,'item')
-  })); // Add this line
+  const locationData = props?.location?.state?.data;
+  // console.log('locationData:', locationData?.map((item)=>{
+  //   console.log(item,'item')
+  // })); // Add this line
  
 console.log(locationData)
 React.useEffect(()=>{
@@ -130,7 +130,7 @@ return ()=>clearTimeout(timeoutId)
        <h3 className='key'>Membership No</h3> 
        </div>
        <div class="col-4 my-2 dark-border border-top-0 border-left-0 border-right-0">
-       <span className='value'>{locationData.membership}</span> 
+       <span className='value'>{locationData?.membership}</span> 
        </div>
        <div class="col-3 my-2">
        <h3 className='key'>رقم المشارك</h3> 

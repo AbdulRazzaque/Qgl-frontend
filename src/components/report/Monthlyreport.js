@@ -1,15 +1,11 @@
-import React, { Fragment, useEffect, useState } from "react";
-// import "./Home.scss";
+import React, { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Dashhead from "../Dashhead";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Autocomplete, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Pagination, Paper, Stack, TextField } from "@mui/material";
+import { Container, Dialog, DialogActions, DialogContent, DialogTitle,  Paper, Stack, TextField } from "@mui/material";
 import { DatePicker, DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import SaveIcon from '@mui/icons-material/Save';
 import PrintIcon from "@mui/icons-material/Print";
-import { Link } from "react-router-dom";
-import { DataGrid } from '@mui/x-data-grid';
 import {useForm} from 'react-hook-form'
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -17,10 +13,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import moment from "moment";
 import dayjs from "dayjs";
 import date from "date-and-time";
-import Receiptpdf from "../Receiptpdf";
 import MaterialTable from 'material-table';
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import idLocale from 'date-fns/locale/id';
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 function Monthlyreport() {
@@ -29,13 +23,12 @@ function Monthlyreport() {
     const [alert, setAlert] = useState(false);
     const [value, setValue] = React.useState("");
     const [value1, setValue1] = React.useState("");
-    const [selectedDate, setSelectedDate] = React.useState();
     const [update, setUpdate] = useState([]);
     const [showDialog, setShowDialog] = useState(false);
     const [updatedate, setupdatedate] = React.useState(dayjs());
     const [updateMicrochip, setupdateMicrochip] = React.useState(dayjs()); 
-  const [microchip,setMicrochip] = useState([])
-  const {register,handleSubmit,reset} = useForm()
+
+  const {handleSubmit} = useForm()
   const history = useHistory();
  
   const columns = [

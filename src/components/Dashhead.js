@@ -1,22 +1,13 @@
 import React, { useState } from "react";
 import "./Dashhead.scss";
 import { withRouter } from "react-router";
-import HomeIcon from "@mui/icons-material/Home";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import NoteAddOutlinedIcon from "@mui/icons-material/NoteAddOutlined";
-import EventAvailableIcon from "@mui/icons-material/EventAvailable";
-import EventAvailableOutlinedIcon from "@mui/icons-material/EventAvailableOutlined";
-import LocalAtmIcon from "@mui/icons-material/LocalAtm";
-import PersonIcon from "@mui/icons-material/Person";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import { connect } from "react-redux";
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import CardMembershipIcon from '@mui/icons-material/CardMembership';
 import LogoutIcon from '@mui/icons-material/Logout';
-import InfoIcon from "@mui/icons-material/Info";
 import SummarizeIcon from '@mui/icons-material/Summarize';
-import { Button } from "@mui/material";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 const Dashhead = (props) => {
   console.log(props);
@@ -35,7 +26,7 @@ const Dashhead = (props) => {
 
       {id === 1 ? (
         <div className="menu-container-active">
-          <p onClick={() => props.history.push("/")}>
+          <p onClick={() => props.history.push("/Home")}>
             <ControlPointIcon /> Entry Mode
           </p>
         </div>

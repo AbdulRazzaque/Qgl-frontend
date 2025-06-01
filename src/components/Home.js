@@ -6,7 +6,7 @@ import Dashhead from "./Dashhead";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
-import Barcode from "./barcode/Barcode";
+
 import {
   Autocomplete,
   Button,
@@ -16,7 +16,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Grid,
   InputLabel,
   MenuItem,
   Select,

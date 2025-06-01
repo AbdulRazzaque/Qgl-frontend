@@ -3,36 +3,22 @@ import "../Home.scss";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Dashhead from "../Dashhead";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Autocomplete, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Input, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import SaveIcon from '@mui/icons-material/Save';
-import PrintIcon from "@mui/icons-material/Print";
-import { Link } from "react-router-dom";
-import { DataGrid } from '@mui/x-data-grid';
+import {  Dialog, DialogActions, DialogContent, DialogTitle,Tooltip } from "@mui/material";
 import {useForm} from 'react-hook-form'
 import axios from "axios";
 import readXlsxFile from "read-excel-file";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import moment from "moment";
-import dayjs from "dayjs";
-import date from "date-and-time";
 import { saveAs } from 'file-saver';
 import MaterialTable from 'material-table';
-import Receiptpdf from "../Receiptpdf";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
 import GetAppIcon from '@mui/icons-material/GetApp';
 import * as XLSX from 'xlsx'
 import Paper from '@mui/material/Paper';
 import { ToastContainer, toast } from 'react-toastify';
  import 'react-toastify/dist/ReactToastify.css';
-import styled from "@emotion/styled";
 const Membership = () => {
     const [display, setDisplay] = React.useState(false);
     const [data,setData]=useState([])
-    const [rows,setRows]=useState([])
     const [showDialog, setShowDialog] = useState(false);
     const [alert, setAlert] = useState(false);
     const [update, setUpdate] = useState([]);
@@ -213,7 +199,17 @@ const deleteRow =async(update)=>{
 // ============================================Xl code export=================================================================================
 
 const handleExport = () => {
-  const filteredData = data.map(item=>({membershipno:item.membershipno,ownername:item.ownername,nationalid:item.nationalid,nationality:item.nationality,telephone:item.telephone,extratelelphone:item.extratelelphone}))
+  const filteredData = data.map(item=>(item
+    // return (itme)
+  //   {
+  //   membershipno:item.membershipno,
+  //   ownername:item.ownername,
+  //   nationalid:item.nationalid,
+  //   nationality:item.nationality,
+  //   telephone:item.telephone,
+  //   extratelelphone:item.extratelelphone
+  // }
+))
   const worksheet = XLSX.utils.json_to_sheet(filteredData);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');

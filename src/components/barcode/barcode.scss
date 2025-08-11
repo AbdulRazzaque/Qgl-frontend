@@ -6,6 +6,16 @@
     @page {
         size: a5 landscape;
     }
+    .barcode_image {
+    position: relative;
+    /* top: -45px; */
+    /* top: -1px; */
+    /* right: 60px; */
+    left: 692px;
+
+    // bottom: 450px;
+    bottom: 600px !important;
+}
 }
 
 .heading_barcode{
@@ -55,7 +65,7 @@
     /* top: -1px; */
     /* right: 60px; */
     left: 692px;
-    // bottom: 173px;
-    // bottom: 209px;
+
     bottom: 450px;
+    // bottom: 600px;
 }

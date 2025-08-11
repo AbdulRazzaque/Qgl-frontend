@@ -25,8 +25,8 @@ console.log(locationData,'this is locaticn Daata')
                     'Amount': `${item.amount} QR`,
                     'Date': moment.parseZone(item.date).local().format("DD/MM/YYYY"),
                     "Tel": item.telephone,
+                    "Exp": moment(item.date).add(1,'month').format("DD/MM/YYYY"),
                     'User': item.userName,
-                    "Exp": moment(item.date).add(1,'month').format("DD/MM/YYYY")
                 };
 
                 return (

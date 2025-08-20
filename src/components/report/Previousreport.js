@@ -18,7 +18,8 @@ import date from "date-and-time";
 import MaterialTable from 'material-table';
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-
+import { saveAs } from 'file-saver';
+import * as XLSX from 'xlsx'
 function Previousreport() {
     const [display,setDisplay]=React.useState(false)
     const [data,setData] = React.useState([])
@@ -117,27 +118,30 @@ function Previousreport() {
 
     //--------------------------------------------------------- Get Data by date request ------------------------------------------------------------
 
-    const onSubmit=(data)=>{
-      console.log(data,'data')
-      try {
-        let obj={
-          value,
-          value1,
-          ...data
-        
-        }
-        console.log(obj,'obj')
-        axios.post(`${process.env.REACT_APP_DEVELOPMENT}/api/monthlyreportQGl`,{from:date.format(value,'YYYY/MM/DD'),to:date.format(value1,'YYYY/MM/DD'), ...obj},)
-        .then(response=>{
-         setData(response.data.pre ,"thisis data")
-        })
-      } catch (error) {
-        console.log(error)
-      }
- 
-    }
+    
+  const onSubmit = async (formValues) => {
+    try {
+      const payload = {
+        from: dayjs(value).format("YYYY/MM/DD"),
+        to: dayjs(value1).format("YYYY/MM/DD"),
+        ...formValues,
+      };
 
-      
+      // console.log("📤 Payload:", payload);
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_DEVELOPMENT}/api/monthlyreportQGl`,
+        payload
+      );
+      // console.log("✅ Response:", response.data.data);
+      setData(response.data.data); 
+    } catch (error) {
+      console.error("❌ Error in onSubmit:", error);
+    }
+  };
+
+  console.log(data,'Data here')
+      // console.log(data,'data')
   
   // ------------------------------------------Get api here -------------------------------------------------------------
 
@@ -161,10 +165,39 @@ function Previousreport() {
       }
 
 
+const handleExportExcel = (evt, selectedRows) => {
+  const handleMoment = (date) =>
+    date ? moment.parseZone(date).local().format("DD/MM/YYYY hh:mm:ss A") : null;
+
+  const filterData = (selectedRows?.length > 0 ? selectedRows : data).map(item => ({
+    "Doc": item.doc,
+    "Date": handleMoment(item.date),
+    "Name": item.name,
+    "Amount": item.amount,
+    "Membership": item.membership,
+    "Telephone": item.telephone,
+    "Payment Method": item.cash,
+    "Being": item.being,
+    "Category": item.category,
+    "Microchip": handleMoment(item.microchip),
+
+
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(filterData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+  const excelBuffer = XLSX.write(workbook, {
+    bookType: 'xlsx',
+    type: 'array'
+  });
+  saveAs(new Blob([excelBuffer], { type: 'application/octet-stream' }), 'Previous Details.xlsx');
+};
+
 useEffect(()=>{
   alldata()
 },[])
-console.log(data,'here i am cheack the data')
+
 
 
   // ------------------------------------------Delete api here -------------------------------------------------------------
@@ -431,36 +464,36 @@ const handleRowClick=(event,rowData)=>{
             margin="23px"
             justifyContent="center"
           >
-            {/* <TextField type="Date" sx={{width:200}} id="outlined-basic" label="" variant="outlined"  /> */}
-            {/* <TextField type="Date"  format="yyyy-MM-dd HH:mm:ss" sx={{width:200}} id="outlined-basic" label="" variant="outlined"  /> */}
-
             <section >
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DesktopDatePicker
-                  label="From"
-                  inputFormat="dd/MM/yyyy"
-                  value={value}
-                  onChange={(newValue) => {
-                    console.log(newValue);
-                    setValue(newValue);
-                  }}
-                  renderInput={(params) => <TextField fullWidth {...params} />}
-                />
-              </LocalizationProvider>
+          
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    sx={{ width: 300 }}
+                    label="From"
+                    format="DD/MM/YYYY"
+                    views={["year", "month", "day"]}
+                   value={value}
+                  onChange={(newValue) => setValue(newValue)}
+                    renderInput={(params) => (
+                      <TextField name="date" {...params} />
+                    )}
+                  />
+                </LocalizationProvider>
             </section>
             <section>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DesktopDatePicker
-                  label="To"
-                  inputFormat="dd/MM/yyyy"
-                  value={value1}
-                  onChange={(newValue) => {
-                    console.log(newValue);
-                    setValue1(newValue);
-                  }}
-                  renderInput={(params) => <TextField fullWidth {...params} />}
-                />
-              </LocalizationProvider>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    sx={{ width: 300 }}
+                    label="From"
+                    format="DD/MM/YYYY"
+                    views={["year", "month", "day"]}
+                   value={value1}
+                  onChange={(newValue) => setValue1(newValue)}
+                    renderInput={(params) => (
+                      <TextField name="date" {...params} />
+                    )}
+                  />
+                </LocalizationProvider>
             </section>
             <button type="submit" class="btn btn-primary" >submit</button>
           </Stack>
@@ -478,15 +511,21 @@ const handleRowClick=(event,rowData)=>{
         headerStyle: {
           fontWeight: 'bold',
         },
-        exportButton: true,
+        // exportButton: true,
         pageSize: 500, // Set the initial page size to 100
         pageSizeOptions: [1000,3000,4000], // Provide an array of possible page sizes
         // paging: false, // Disable pagination
         search: true,
         filtering:true
       }}
-     
-
+      actions={[
+    {
+      icon: 'save_alt',
+      tooltip: 'Export to Excel',
+      isFreeAction: true,
+      onClick: (event) => handleExportExcel(event, data)
+    }
+  ]}
     /> 
     </Paper>
           </div>

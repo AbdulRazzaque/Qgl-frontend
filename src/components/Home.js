@@ -668,6 +668,9 @@ const columns = [
                   onChange={(e) => {
                     setDocNo(e.target.value);
                   }}
+                    InputProps={{
+                      readOnly: true, // Makes it readonly
+                    }}
                   required
                 />
               </div>
@@ -859,11 +862,16 @@ const columns = [
             value={duplicate}
             onChange={(e) => {
               const value = parseInt(e.target.value, 10);
-              if (value >= 1 || e.target.value === "") {
+              // if (value >= 1 || e.target.value === "") {
+              //   setDuplicate(e.target.value);
+              // }
+                  // Allow only empty string or numbers between 1 and 30
+              if ((value >= 1 && value <= 30) || e.target.value === "") {
                 setDuplicate(e.target.value);
               }
             }}
-            inputProps={{ min: 1 }}
+            // inputProps={{ min: 1 }}
+              inputProps={{ min: 1, max: 30 }}
             autoComplete="off"
           />
               </div>

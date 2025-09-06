@@ -550,7 +550,7 @@ function Monthlyreport() {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     sx={{ width: 300 }}
-                    label="From"
+                    label="To"
                     format="DD/MM/YYYY"
                     views={["year", "month", "day"]}
                     value={value1}

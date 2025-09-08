@@ -901,7 +901,7 @@ const columns = [
           </div>
         </div>
         <div className="my-3">
-        <Button variant="contained" color="error"  disabled={selectedRows.length === 0} onClick={() => setAlert(true)}> Delete Rows  <DeleteIcon/></Button>
+        {/* <Button variant="contained" color="error"  disabled={selectedRows.length === 0} onClick={() => setAlert(true)}> Delete Rows  <DeleteIcon/></Button> */}
         <Button variant="contained" color="success" disabled={selectedData.length === 0} className="mx-5" onClick={() => clickPrintIcon()}> select Pritn <LibraryAddCheckIcon className="mx-2"/></Button>
         <Button variant="contained" disabled={selectedData.length === 0} className="" onClick={handleBarcodeClick}> select Barcode <QrCode2Icon className="mx-2"/></Button>
         </div>

@@ -24,10 +24,8 @@ import {
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import SaveIcon from "@mui/icons-material/Save";
-import PrintIcon from "@mui/icons-material/Print";
-import { Link } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
-import { set, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -40,12 +38,12 @@ import _ from "lodash";
 import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import config from "./login/Config";
 
 function Home() {
   const [display, setDisplay] = React.useState(false);
   const [data, setData] = React.useState([]);
   const [alert, setAlert] = useState(false);
-  const [value, setValue] = React.useState("");
   const [selectedDate, setSelectedDate] = React.useState(dayjs());
   const [update, setUpdate] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
@@ -53,14 +51,12 @@ function Home() {
   const [updateMicrochip, setupdateMicrochip] = React.useState();
   const [owner, setOwner] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectowner, setSelectedOwner] = useState([]);
   const [selectmemberno, setSelectedMemberNo] = useState([]);
   const [microchip, setMicrochip] = useState([]);
   const [doc, setDocNo] = React.useState(0);
   const [category, Setcategory] = React.useState("");
   const [duplicate, setDuplicate] = useState(1);
   const [inputValue, setInputValue] = useState('');
-  const [count, setCount] = useState();
   const [selectedRows,setSelectedRows]= useState([])
   const [selectedData,setSelectedData]= useState([])
   const [error, setError] = useState(null);
@@ -86,96 +82,58 @@ function Home() {
   const location = useLocation();
 
 
-  const onSubmit = async (data, action) => {
-    if (action === "save") {
-      var obj = {
-        userName:location?.state?.name,
-        date: selectedDate,
-        membership: selectmemberno?.membershipno,
-        name: selectmemberno?.ownername,
-        telephone: selectmemberno?.telephone,
-        microchip: microchip,
-        category: category,
-        duplicate: duplicate,
-        doc,
-        ...data,
-      };
-      try {
-        await axios
-          .post(`${process.env.REACT_APP_DEVELOPMENT}/api/qgl`, obj)
-          .then((response) => {
-            // setCount(count + 1);
-            // setCount((prevCount) => prevCount + 1);
-            console.log( obj,"Data saved successfully");
-            toast.success('Data added successfully', {
-              position: "top-center",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              // transition: Bounce,
-              });
-            reset();
-          })
-          .catch((error) => {
-            toast(error.response.data, {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-            });
-          });
-      } catch (error) {
-        console.log(error, "This is error");
-      }
-    } else if (action === "print") {
-      var obj = {
-        date: selectedDate,
-        membership: selectmemberno.membershipno,
-        name: selectmemberno.ownername,
-        telephone: selectmemberno.telephone,
-        microchip: microchip,
-        category: category,
-        duplicate: duplicate,
-        doc,
-        ...data,
-      };
-      const combinedObj = { ...data, ...obj };
-      try {
-        await axios
-          .post(`${process.env.REACT_APP_DEVELOPMENT}/api/qgl`, obj)
-          .then((response) => {
-            // setCount((prevCount) => prevCount + 1);
-            history.push("/Receiptpdf", { data: combinedObj });
-          
-            reset();
-          })
-          .catch((error) => {
-            toast(error.response.data, {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-            });
-          });
-      } catch (error) {
-        console.log(error, "This is error");
-      }
-    }
-
-    alldata();
+// Example: import/useState elsewhere in your component
+// const [isSubmitting, setIsSubmitting] = useState(false);
+console.log(config.accessToken)
+const onSubmit = async (data, action) => {
+  const url = `${process.env.REACT_APP_DEVELOPMENT}/api/qgl`;
+  const toastBaseOptions = {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
   };
+
+  const baseObj = {
+    userName: config?.accessToken,               // optional chaining in case location or state is undefined
+    date: selectedDate,
+    membership: selectmemberno?.membershipno,
+    name: selectmemberno?.ownername,
+    telephone: selectmemberno?.telephone,
+    microchip,
+    category,
+    duplicate,
+    doc,
+    ...data, // merges data last so any fields in data can override earlier keys if needed
+  };
+
+  // Local helper to show toast errors (keeps code tidy)
+  const showError = (err) => {
+    const message = err?.response?.data || err?.message || "Something went wrong";
+    toast.error(message, { ...toastBaseOptions, theme: "dark" });
+  };
+
+  try {
+    const response = await axios.post(url, baseObj);
+
+    // If success
+    toast.success("Data added successfully", { ...toastBaseOptions, position: "top-center", theme: "light" });
+
+    reset();
+  } catch (error) {
+    console.error("onSubmit error:", error);
+    showError(error);
+  } finally {
+    try {
+      alldata();
+    } catch (err) {
+      console.warn("alldata() failed:", err);
+    }
+  }
+};
 
   // const {register,handleSubmit}=useForm();
   const handleSaveButtonClick = () => {
@@ -382,18 +340,7 @@ const columns = [
       </Fragment>
     ),
   },
-  // {
-  //   title: "Print",
-  //   field: "Print",
-  //   width: 100,
-  //   renderCell: (params) => (
-  //     <Fragment>
-  //       <Button color="success" onClick={() => clickPrintIcon(params.row)}>
-  //         <PrintIcon />
-  //       </Button>
-  //     </Fragment>
-  //   ),
-  // },
+ 
 ];
 
 // ====*******************************************************************************End*************************************************************************************************************************************************************
@@ -901,7 +848,8 @@ const columns = [
           </div>
         </div>
         <div className="my-3">
-        {/* <Button variant="contained" color="error"  disabled={selectedRows.length === 0} onClick={() => setAlert(true)}> Delete Rows  <DeleteIcon/></Button> */}
+         { config.accessToken === "M.Radwan" ?  <Button variant="contained" color="error"  disabled={selectedRows.length === 0} onClick={() => setAlert(true)}> Delete Rows  <DeleteIcon/></Button> :""}
+       
         <Button variant="contained" color="success" disabled={selectedData.length === 0} className="mx-5" onClick={() => clickPrintIcon()}> select Pritn <LibraryAddCheckIcon className="mx-2"/></Button>
         <Button variant="contained" disabled={selectedData.length === 0} className="" onClick={handleBarcodeClick}> select Barcode <QrCode2Icon className="mx-2"/></Button>
         </div>

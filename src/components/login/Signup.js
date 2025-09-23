@@ -77,53 +77,24 @@ const Signup = () => {
   const [showLoginForm, setShowLoginForm] = useState(true);
  
   const history = useHistory();
-  const url = process.env.REACT_APP_DEVELOPMENT;
   const { register, handleSubmit, formState: { errors } } = useForm();
-  // const onSubmit = async(data)=>{
-  //   try {
-  //   await axios.post(`${url}/api/login`,data,
-  //   {
-  //     headers:{token:`${accessToken}`}
-  //   }).then(response=>{
-  //     console.log(response,'res')
-  //     history.push({pathname:'/Home',state:data,});
-      
-  //   }).catch(error=>{
-  //     toast(error.response.data.message,{
-  //       position: "top-right",
-  //       autoClose: 5000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //       theme: "light",
-  //     })
-  //   })
-  //   } catch (error) {
-  //     console.log(error)
-      
-  //   }
-  // }
-
 
   const onSubmit = async (data) => {
     try {
-      console.log(data, 'data');
+      // console.log(data, 'is this user Data');
       
       const res = await axios.post(`${process.env.REACT_APP_DEVELOPMENT}/api/login`, data);
       console.log(res)
-      const accessToken = res.data.token;
-      console.log(accessToken, 'kkk');
-      console.log(res, 'res');
+      const accessToken = res.data.user.name;
+
+     
   
       if (accessToken) {
-        console.log(accessToken, 'acces');
         sessionStorage.setItem('accessToken', accessToken);
         setIsAuthenticated(true);
         setShowLoginForm(false);
         setTimeout(() => {
-          history.push({pathname:'/Home',state:data,});
+          history.push({pathname:'/Home'});
         }, 500);
       } else {
         throw new Error('Authentication failed');

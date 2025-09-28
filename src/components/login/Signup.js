@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { CssBaseline, Container, Box, TextField, Typography, Button, Paper, Alert, AlertTitle, IconButton } from '@mui/material';
-import { AccountCircle, Lock } from '@mui/icons-material'; // Import icons
+import { CssBaseline, Container, TextField, Typography, Button, Paper, IconButton } from '@mui/material';
+import { AccountCircle } from '@mui/icons-material'; // Import icons
 import logo from '../../images/logo.png';
 import axios from 'axios';
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -81,8 +81,7 @@ const Signup = () => {
 
   const onSubmit = async (data) => {
     try {
-      // console.log(data, 'is this user Data');
-      
+
       const res = await axios.post(`${process.env.REACT_APP_DEVELOPMENT}/api/login`, data);
       console.log(res)
       const accessToken = res.data.user.name;
@@ -103,6 +102,8 @@ const Signup = () => {
       console.log('Error:', error);
       toast(error.response?.data.message || error.response.data.message, {
         position: "top-right",
+
+        
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,

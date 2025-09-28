@@ -33,7 +33,6 @@ import moment from "moment";
 import dayjs from "dayjs";
 import date from "date-and-time";
 import FormControl from "@mui/material/FormControl";
-import Receiptpdf from "./Receiptpdf";
 import _ from "lodash";
 import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { ToastContainer, toast } from "react-toastify";
@@ -79,12 +78,12 @@ function Home() {
     reset,
     formState:  { errors },
   } = useForm();
-  const location = useLocation();
+
 
 
 // Example: import/useState elsewhere in your component
 // const [isSubmitting, setIsSubmitting] = useState(false);
-console.log(config.accessToken)
+// console.log(config.accessToken)
 const onSubmit = async (data, action) => {
   const url = `${process.env.REACT_APP_DEVELOPMENT}/api/qgl`;
   const toastBaseOptions = {
@@ -123,6 +122,7 @@ const onSubmit = async (data, action) => {
     toast.success("Data added successfully", { ...toastBaseOptions, position: "top-center", theme: "light" });
 
     reset();
+    setDuplicate(1)
   } catch (error) {
     console.error("onSubmit error:", error);
     showError(error);

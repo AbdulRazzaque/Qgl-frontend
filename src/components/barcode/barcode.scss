@@ -1,3 +1,7 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
+
+
 @media print{
     body{
         height: 90%;
@@ -25,6 +29,7 @@
 
 
 }
+
 
 .main{
 
@@ -59,13 +64,44 @@
 
 }
 
+// .barcode_image {
+//     position: relative;
+//     /* top: -45px; */
+//     /* top: -1px; */
+//     /* right: 60px; */
+//     left: 692px;
+
+//     bottom: 450px;
+//     // bottom: 600px;
+// }
 .barcode_image {
     position: relative;
-    /* top: -45px; */
+    /* top: -137px; */
     /* top: -1px; */
-    /* right: 60px; */
-    left: 692px;
-
-    bottom: 450px;
-    // bottom: 600px;
+    right: 70px;
+    /* left: 692px; */
+    bottom: 391px;
 }
+.barcode-list {
+  font-family: 'Nunito', sans-serif;
+  direction: rtl; /* IMPORTANT for Arabic layout */
+  color: #111;
+//   position: absolute;
+}
+// .barcode-row {
+//   display: flex;
+//   align-items: center;   /* vertically center */
+//   gap: 6px;             /* label aur value ke beech thoda space */
+// }
+
+// .barcode-label {
+//   font-size: 14px;
+//   font-weight: 600;
+//   margin: 0;
+// }
+
+// .barcode-value {
+//   font-size: px;
+//   font-weight: 700;
+//   margin: 0;
+// }

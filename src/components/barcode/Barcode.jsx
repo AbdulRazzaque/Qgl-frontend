@@ -22,12 +22,12 @@ function Barcode(props) {
           { label: "الرسوم", value: `${item.amount || ""} QR` },
           {
             label: "تاريخ الترخيص",
-            value: moment.parseZone(item.microchip).local().format("DD/MM/YYYY"),
+            value: moment.parseZone(item.date).local().format("DD/MM/YYYY"),
           },
           { label: "الهاتف", value: String(item.telephone || "") },
           {
             label: "انتهاء الصلاحية",
-            value: moment(item.microchip).add(1, "month").format("DD/MM/YYYY"),
+            value: item.microchip? moment(item.microchip).add(1, "month").format("DD/MM/YYYY"):"",
           },
           { label: "المستخدم", value: item.userName || "" },
         ];

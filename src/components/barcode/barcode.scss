@@ -20,10 +20,11 @@
     // bottom: 450px;
     bottom: 600px !important;
 }
+
 }
 
 .heading_barcode{
-    font-size: 50px;
+    font-size: 40px;
     position: relative;
     // left: 80px;
 
@@ -40,8 +41,7 @@
     width: 800px;
 
     height: 570px;
-    // margin: 50px;
-    // margin-left: 34px;
+
    
     margin-top: 10px;
     // padding: 15px;
@@ -49,11 +49,6 @@
     page-break-after: always; /* Forces each barcode to print on a new page */
 
 }
-
-
-// .barcodBox{
-//     display: flex;
-// }
 
     .barcodeText {
         margin-top: 28px;
@@ -64,44 +59,17 @@
 
 }
 
-// .barcode_image {
-//     position: relative;
-//     /* top: -45px; */
-//     /* top: -1px; */
-//     /* right: 60px; */
-//     left: 692px;
 
-//     bottom: 450px;
-//     // bottom: 600px;
-// }
 .barcode_image {
+    bottom: 373px;
     position: relative;
-    /* top: -137px; */
-    /* top: -1px; */
-    right: 70px;
-    /* left: 692px; */
-    bottom: 391px;
+    left: 54px;
 }
+
 .barcode-list {
-  font-family: 'Nunito', sans-serif;
-  direction: rtl; /* IMPORTANT for Arabic layout */
-  color: #111;
-//   position: absolute;
+    color: #111;
+    direction: rtl;
+    font-family: Nunito, sans-serif;
+    position: relative;
+    right: 80px;
 }
-// .barcode-row {
-//   display: flex;
-//   align-items: center;   /* vertically center */
-//   gap: 6px;             /* label aur value ke beech thoda space */
-// }
-
-// .barcode-label {
-//   font-size: 14px;
-//   font-weight: 600;
-//   margin: 0;
-// }
-
-// .barcode-value {
-//   font-size: px;
-//   font-weight: 700;
-//   margin: 0;
-// }

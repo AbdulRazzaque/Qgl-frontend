@@ -8,7 +8,7 @@ function Barcode(props) {
 
   useEffect(() => {
     setTimeout(() => {
-      // window.print();
+      window.print();
     }, 1000);
   }, []);
 
@@ -42,7 +42,7 @@ function Barcode(props) {
               <h4 className="heading_barcode">
                 {fields.map(({ label, value }) => (
                   <p key={label}>
-                    <strong className="valuebarcode">{label}</strong> : {value}
+                    <span className="valuebarcode">{label}</span> : {value}
                   </p>
                 ))}
               </h4>
@@ -53,7 +53,7 @@ function Barcode(props) {
               {/* QR Code */}
               <QRCode
                 value={qrPayload}
-                size={300}
+                size={250}
                 level="M"
                 includeMargin
                 renderAs="canvas"

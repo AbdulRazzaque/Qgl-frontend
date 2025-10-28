@@ -33,8 +33,7 @@ import moment from "moment";
 import dayjs from "dayjs";
 import date from "date-and-time";
 import FormControl from "@mui/material/FormControl";
-import _ from "lodash";
-import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory} from "react-router-dom/cjs/react-router-dom.min";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import config from "./login/Config";
@@ -141,10 +140,7 @@ const onSubmit = async (data, action) => {
     handleSubmit((formData) => onSubmit(formData, "save"))();
   };
 
-  const handlePrintButtonClick = () => {
-    // Trigger the form submission with the 'print' action
-    handleSubmit((formData) => onSubmit(formData, "print"))();
-  };
+
 
   // ------------------------------------------update api here -------------------------------------------------------------
 
@@ -184,15 +180,21 @@ const onSubmit = async (data, action) => {
       await axios
         .get(`${process.env.REACT_APP_DEVELOPMENT}/api/getreceipt`)
         .then((response) => {
-          if (response.data.length > 0) {
-            setDocNo(parseInt(response.data[0].doc) + 1);
-          }
-          let arr = response.data.map((item, index) => ({
+          const receipts = Array.isArray(response.data) ? response.data : [];
+
+          // Prepare rows for the grid
+          const arr = receipts.map((item, index) => ({
             ...item,
             id: index + 1,
           }));
-
           setData(arr);
+
+          // Compute next Doc number robustly: max existing numeric doc + 1 (defaults to 1)
+          const maxDoc = receipts.reduce((max, r) => {
+            const n = parseInt(r?.doc, 10);
+            return Number.isFinite(n) ? Math.max(max, n) : max;
+          }, 0);
+          setDocNo(maxDoc + 1);
         });
     } catch (error) {
       console.log(error);
@@ -842,9 +844,7 @@ const columns = [
           <div
             style={{ textAlign: "left", position: "relative", bottom: "35px" }}
           > 
-            {/* <Button variant="contained" onClick={handlePrintButtonClick}>
-              <PrintIcon className="mr-1" /> Print Form
-            </Button> */}
+            
           </div>
         </div>
         <div className="my-3">

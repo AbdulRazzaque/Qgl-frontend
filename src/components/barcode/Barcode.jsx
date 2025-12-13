@@ -1,20 +1,30 @@
 import React, { useEffect } from "react";
-import QRCode from "qrcode.react";
+import { QRCodeCanvas } from "qrcode.react";
 import "./barcode.scss";
 import moment from "moment";
-import logo from '../../images/logo.png'
-function Barcode(props) {
-  const locationData = props.location.state?.data || [];
+import logo from "../../images/logo.png";
+import { useLocation } from "react-router-dom";
+
+function Barcode({ data }) {
+  const location = useLocation();
+
+  // ✅ STEP 1: data source priority
+  const rawData = data ?? location.state?.data ?? [];
+
+  // ✅ STEP 2: always convert to array
+  const locationData = Array.isArray(rawData) ? rawData : [rawData];
 
   useEffect(() => {
     setTimeout(() => {
-      window.print();
+      // window.print();
     }, 1000);
   }, []);
 
   return (
     <div className="barcode-list">
       {locationData.map((item, index) => {
+        if (!item) return null; // ✅ safety guard
+
         const fields = [
           { label: "الاسم", value: item.name || "" },
           { label: "رقم المشارك", value: item.membership || "" },
@@ -22,23 +32,31 @@ function Barcode(props) {
           { label: "الرسوم", value: `${item.amount || ""} QR` },
           {
             label: "تاريخ الترخيص",
-            value: moment.parseZone(item.date).local().format("DD/MM/YYYY"),
+            value: item.date
+              ? moment.parseZone(item.date).local().format("DD/MM/YYYY")
+              : "",
           },
           { label: "الهاتف", value: String(item.telephone || "") },
           {
             label: "انتهاء الصلاحية",
-            value: item.microchip? moment(item.microchip).add(1, "month").format("DD/MM/YYYY"):"",
+            value: item.microchip
+              ? moment(item.microchip).add(1, "month").format("DD/MM/YYYY")
+              : "",
           },
           { label: "المستخدم", value: item.userName || "" },
         ];
 
-        const safe = (v) => String(v).replace(/[\t\r\n]/g, " ");
-        const qrPayload = fields.map(f => safe(f.value)).join("\t");
+        const qrPayload = fields
+          .map(f => String(f.value).replace(/[\t\r\n]/g, " "))
+          .join("\t");
 
         return (
           <div key={index} className="main mx-5 print-container">
-            {/* Text section */}
-            <div className="barcodeText" style={{ direction: "rtl", textAlign: "right" }}>
+            {/* Text */}
+            <div
+              className="barcodeText"
+              style={{ direction: "rtl", textAlign: "right" }}
+            >
               <h4 className="heading_barcode">
                 {fields.map(({ label, value }) => (
                   <p key={label}>
@@ -48,31 +66,31 @@ function Barcode(props) {
               </h4>
             </div>
 
-            {/* QR Code + Logo section */}
-            <div className="barcode_image" style={{ position: "relative", display: "inline-block" }}>
-              {/* QR Code */}
-              <QRCode
+            {/* QR */}
+            <div
+              className="barcode_image"
+              style={{ position: "relative", display: "inline-block" }}
+            >
+              <QRCodeCanvas
                 value={qrPayload}
                 size={250}
                 level="M"
                 includeMargin
-                renderAs="canvas"
               />
-              
-              {/* Logo overlay at center */}
+
               <img
-                src={logo}    // 🔸 Place logo.png inside /public folder
+                src={logo}
                 alt="Company Logo"
                 style={{
                   position: "absolute",
                   top: "50%",
                   left: "50%",
                   transform: "translate(-50%, -50%)",
-                  width: "60px",      // adjust as needed
-                  height: "60px",
-                  borderRadius: "12px",
-                  background: "white", // gives white padding behind logo
-                  padding: "5px",      // spacing to improve scan readability
+                  width: 60,
+                  height: 60,
+                  borderRadius: 12,
+                  background: "white",
+                  padding: 5,
                 }}
               />
             </div>

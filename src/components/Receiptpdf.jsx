@@ -1,20 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import './pdf.scss'
-import axios from 'axios';
 import moment from 'moment'
-// import logo from '../../images/logo.png';
-import logo from '../images/logo.png'
 import FIRSTLAB from '../images/FIRST LAB.png'
 import GENETICCENTER from '../images/GENETIC CENTER.png'
 import FOOTER from '../images/FOOTER.png'
 import COMMITTEELOGO from '../images/COMMITTEE LOGO.jpg'
-const Receiptpdf = (props) => {
+import { useLocation } from 'react-router-dom'
+const Receiptpdf = () => {
   const [currentDateTime,setCurrentDateTime]=useState(moment())
-  console.log('props:', props); // Add this line
-  const locationData = props?.location?.state?.data;
-  // console.log('locationData:', locationData?.map((item)=>{
-  //   console.log(item,'item')
-  // })); // Add this line
+  const location = useLocation();
+  const locationData = location?.state?.data || [];
  
 console.log(locationData)
 React.useEffect(()=>{
@@ -22,7 +17,6 @@ React.useEffect(()=>{
     setCurrentDateTime(moment()) ;        
     window.print();   
 }, 1000);
-//Cleare the timeout when the componet unouts to prevet memory
 return ()=>clearTimeout(timeoutId)
 },[])
   return (
@@ -43,7 +37,6 @@ return ()=>clearTimeout(timeoutId)
        </div>
        <div className='col-4'>
     {
-     // (locationData.category === "Committee"?  <img src={COMMITTEELOGO} alt="Logo" className='mylogo' />:"")
      (locationData.category === "Committee"  ?  <img src={COMMITTEELOGO} alt="Logo" className='mylogo' />:"")
    } 
     

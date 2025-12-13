@@ -1,22 +1,14 @@
-import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import React from "react";
+import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({ component: Component, ...rest }) => {
-  const isAuthenticated = !!sessionStorage.getItem('accessToken');
-  console.log(isAuthenticated, 'isAuthenticated');
+const ProtectedRoute = ({ children }) => {
+  const isAuthenticated = !!sessionStorage.getItem("accessToken");
 
-  return (
-    <Route
-      {...rest}    
-      render={props =>
-        isAuthenticated ? (  
-          <Component {...props} />
-        ) : (
-          <Redirect to="/" />
-        )
-      }
-    />
-  );
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />; // redirect to login
+  }
+
+  return children; // agar authenticated hai to children render karo
 };
 
 export default ProtectedRoute;

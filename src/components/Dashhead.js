@@ -1,112 +1,118 @@
-import React, { useState } from "react";
+// Dashhead.jsx
+import React, { memo, useCallback } from "react";
 import "./Dashhead.scss";
-import { withRouter } from "react-router";
+import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import NoteAddOutlinedIcon from "@mui/icons-material/NoteAddOutlined";
-import { connect } from "react-redux";
-import ControlPointIcon from '@mui/icons-material/ControlPoint';
-import CardMembershipIcon from '@mui/icons-material/CardMembership';
-import LogoutIcon from '@mui/icons-material/Logout';
-import SummarizeIcon from '@mui/icons-material/Summarize';
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-const Dashhead = (props) => {
-  console.log(props);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const history = useHistory();
-  const logout = () => {
-    sessionStorage.removeItem('accessToken');
-    setIsAuthenticated(false);
-    history.push('/');
-  };
-  let { id, display } = props;
-  
+import ControlPointIcon from "@mui/icons-material/ControlPoint";
+import CardMembershipIcon from "@mui/icons-material/CardMembership";
+import LogoutIcon from "@mui/icons-material/Logout";
+import SummarizeIcon from "@mui/icons-material/Summarize";
+import BiotechIcon from "@mui/icons-material/Biotech";
+
+const MENU_ITEMS = [
+  {
+    id: 1,
+    label: "Entry Mode",
+    path: "/Receipt",
+    icon: <ControlPointIcon />,
+    activeIcon: <ControlPointIcon />,
+  },
+  {
+    id: 2,
+    label: "Previous Details",
+    path: "/Previousreport",
+    icon: <NoteAddOutlinedIcon />,
+    activeIcon: <NoteAddIcon />,
+  },
+  {
+    id: 3,
+    label: "Monthly Details",
+    path: "/Monthlyreport",
+    icon: <SummarizeIcon />,
+    activeIcon: <SummarizeIcon />,
+  },
+  {
+    id: 4,
+    label: "MemberShip Form",
+    path: "/Membership",
+    icon: <CardMembershipIcon />,
+    activeIcon: <CardMembershipIcon />,
+  },
+  {
+    id: 5,
+    label: "Genetic",
+    path: "/Genetic",
+    icon: <BiotechIcon  />,
+    activeIcon: <BiotechIcon  />,
+  },
+];
+
+const Dashhead = ({ id = null, display = true }) => {
+  const navigate = useNavigate();
+
+
+ const handleNavigate = useCallback(
+    (path) => {
+      if (path) navigate(path); // history.push -> navigate
+    },
+    [navigate]
+  );
+
+   const logout = useCallback(() => {
+    sessionStorage.removeItem("accessToken");
+    navigate("/"); // history.push -> navigate
+  }, [navigate]);
+
+  const rootClass = display
+    ? "shadow-lg dashhead"
+    : "dashhead displayhidden min-vh-100";
+
   return (
-    <div   className={display ? "shadow-lg dashhead" : "dashhead displayhidden min-vh-100 "}id="sidebar-wrapper">
-      <h1>QGL</h1>
+    <aside className={rootClass} id="sidebar-wrapper" aria-label="sidebar">
+      <h1 className="dashhead-brand">QGL</h1>
 
-      {id === 1 ? (
-        <div className="menu-container-active">
-          <p onClick={() => props.history.push("/Home")}>
-            <ControlPointIcon /> Entry Mode
-          </p>
-        </div>
-      ) : (
-        <div className="menu-container" onClick={() => props.history.push("/Home")}>
-          <p>
-            <ControlPointIcon /> Entry Mode
-          </p>
-        </div>
-      )}
+      <nav className="dashhead-menu" aria-label="main menu">
+        {MENU_ITEMS.map((item) => {
+          const isActive = id === item.id;
+          return (
+            <div
+              key={item.id}
+              className={isActive ? "menu-container-active" : "menu-container"}
+              onClick={() => handleNavigate(item.path)}
+              role="button"
+              tabIndex={0}
+              onKeyPress={(e) => {
+                if (e.key === "Enter" || e.key === " ") handleNavigate(item.path);
+              }}
+              aria-current={isActive ? "page" : undefined}
+            >
+              <p>
+                {isActive ? item.activeIcon : item.icon} {item.label}
+              </p>
+            </div>
+          );
+        })}
+      </nav>
 
-{id === 2 ? (
-        <div className="menu-container-active">
-          <p onClick={() => props.history.push("Previousreport")}>
-            <NoteAddIcon /> Previous Details
-          </p>
-        </div>
-      ) : (
-        <div
-          className="menu-container"
-          onClick={() => props.history.push("Previousreport")}
+      <div className="sticky-bottom fixed-bottom ml-1 mb-1 bt">
+        <button
+          type="button"
+          className="btn btn-danger"
+          style={{ width: "14%" }}
+          onClick={logout}
         >
-          <p>
-            <NoteAddOutlinedIcon /> Previous Details
-          </p>
-        </div>
-      )}
-
-{id === 3 ? (
-        <div className="menu-container-active">
-          <p onClick={() => props.history.push("Monthlyreport")}>
-            <SummarizeIcon /> Monthly Details
-          </p>
-        </div>
-      ) : (
-        <div
-          className="menu-container"
-          onClick={() => props.history.push("Monthlyreport")}
-        >
-          <p>
-            <SummarizeIcon /> Monthly Details
-          </p>
-        </div>
-      )}
-      
-
-
-      {id === 4 ? (
-        <div className="menu-container-active">
-          <p onClick={() => props.history.push("Membership")}>
-            <CardMembershipIcon /> MemberShip Form
-          </p>
-        </div>
-      ) : (
-        <div
-          className="menu-container"
-          onClick={() => props.history.push("Membership")}
-        >
-          <p>
-            <CardMembershipIcon />  MemberShip Form
-          </p>
-        </div>
-      )}
-
-<div className="sticky-bottom fixed-bottom ml-1 mb-1 bt">
-       <button className="btn btn-danger"  style={{ width: "14%" }} onClick={logout}>
-            Logout <LogoutIcon className="mx-3"  />
-          </button>
-        </div>
-
-    </div>
-    
+          Logout <LogoutIcon className="mx-3" />
+        </button>
+      </div>
+    </aside>
   );
 };
 
-
-const mapStateToProps = ({ EventUser }) => {
-  return {
-    user: EventUser,
-  };
+Dashhead.propTypes = {
+  id: PropTypes.number,
+  display: PropTypes.bool,
 };
 
-export default connect(mapStateToProps)(withRouter(Dashhead));
+export default memo(Dashhead);

@@ -1,124 +1,96 @@
-import React, { Fragment, useEffect, useState } from "react";
-// import "./Home.scss";
-import './report.scss'
+import React, { useEffect, useState } from "react";
+import "./report.scss";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Dashhead from "../Dashhead";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import {  Container, Dialog, DialogActions, DialogContent, DialogTitle,  Paper, Stack, TextField } from "@mui/material";
-import { DatePicker, DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import {
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Paper,
+  Stack,
+  Box,
+  Button,
+} from "@mui/material";
+import TextField from '@mui/material/TextField';
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import PrintIcon from "@mui/icons-material/Print";
-import {useForm} from 'react-hook-form'
+import { useForm } from "react-hook-form";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import moment from "moment";
 import dayjs from "dayjs";
-import date from "date-and-time";
-import MaterialTable from 'material-table';
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { saveAs } from 'file-saver';
-import * as XLSX from 'xlsx'
+import { useNavigate } from "react-router-dom";
+import { saveAs } from "file-saver";
+import * as XLSX from "xlsx";
+
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarQuickFilter,
+} from "@mui/x-data-grid";
+
 function Previousreport() {
-    const [display,setDisplay]=React.useState(false)
-    const [data,setData] = React.useState([])
-    const [alert, setAlert] = useState(false);
-    const [value, setValue] = React.useState("");
-    const [value1, setValue1] = React.useState("");
-    const [update, setUpdate] = useState([]);
-    const [showDialog, setShowDialog] = useState(false);
-    const [updatedate, setupdatedate] = React.useState(dayjs());
-    const [updateMicrochip, setupdateMicrochip] = React.useState(dayjs()); 
-  const {handleSubmit} = useForm()
-  const history = useHistory();
- 
-  const columns = [
-    { field: 'id', title: 'ID', width: 50 },
-    { field: 'doc', title: 'Doc', width: 50, customExport: (dataExport) => dataExport.toString() },
-    // { field: 'date', title: 'Date', width: 130 },
-    {field: "date",title: "Date",width: 130, type:'date',render:(rowData)=>moment(rowData.date).format("DD/MM/YYYY")},
-    { field: 'name', title: 'Name', width: 130 ,cellStyle: { direction: 'rtl' }  },
-    { field: 'amount', title: 'Amount', width: 100 },
-    { field: 'membership', title: 'Membership', width: 100 },
-    { field: 'telephone', title: 'TelePhone', width: 100 },
-    { field: 'cash', title: 'Payment Method', width: 100 },
-    { field: 'being', title: 'Being', width: 100 },
-    { field: 'category', title: 'category', width: 100 },
-    // {title: "Microchip ",field: "microchip",width: 150,renderCell: (param) =>moment.parseZone(param.value).local().format("DD/MM/YYYY"),},
-    {field: "microchip",title: "Microchip", type:'date',width: 150,render:(rowData)=>rowData.microchip? moment(rowData.microchip).format("DD/MM/YYYY"):""},
-    { 
-      title: 'Actions',
-      field: 'actions',
-      export:false,
-       width: 90,
-      render: () => (
-        <IconButton
-        onClick={() => setShowDialog(true)} // Add your click handler for the icon action
-        >
-          <EditIcon /> {/* Display the icon */}
-        </IconButton>
-      ),
-    },
-    {
-      title: 'Actions',
-      field: 'actions',
-      export:false,
-      width: 90,
-      render: (rowData) => (
-        <IconButton
-        onClick={() => setAlert(true)} // Add your click handler for the icon action
-        >
-          <DeleteIcon /> {/* Display the icon */}
-        </IconButton>
-      ),
-    },
-    {
-      title: 'Actions',
-      field: 'actions',
-      export:false,
-      width: 90,
-      render: (rowData) => (
-        <IconButton
-        onClick={() =>clickPrintIcon(rowData)} // Add your click handler for the icon action
-        >
-        <PrintIcon /> {/* Display the icon */}
-        </IconButton>
-      ),
-    },
- 
-  ];
-  // ------------------------------------------update api here -------------------------------------------------------------
+  const [display, setDisplay] = useState(false);
+  const [data, setData] = useState([]);
+  const [alert, setAlert] = useState(false);
+  const [value, setValue] = useState("");
+  const [value1, setValue1] = useState("");
+  const [update, setUpdate] = useState(null);
+  const [showDialog, setShowDialog] = useState(false);
+  const [updatedate, setupdatedate] = useState(dayjs());
+  const [updateMicrochip, setupdateMicrochip] = useState(dayjs());
+  const { handleSubmit } = useForm();
+  const navigate = useNavigate();
 
-  const updateData = (e)=>{
-    setUpdate({...update,[e.target.name]:e.target.value})
-    console.log(update)
-  }
-  const updateRow = async()=>{
-    var obj = {
-      date:updatedate ,
-      microchip:updateMicrochip,
-      ...date,
-    } 
+  // fetch all rows
+  const alldata = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_DEVELOPMENT}/api/getReceipts`);
+      const arr = (response.data || []).map((item, index) => ({
+        ...item,
+        doc: `\u200B${item.doc}`,
+        // ensure unique id for DataGrid
+        id:  index + 1,
+      }));
+      setData(arr);
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
 
-    const combinedObj = {...update ,...obj};
-    console.log(combinedObj)
-        try {
-          await axios.put(`${process.env.REACT_APP_DEVELOPMENT}/api/updatereceipt/${update._id}`,combinedObj)
-          .then(response=>{
-            console.log(response)
-          })
-          setShowDialog(false)
-        } catch (error) {
-          console.log(error)
-          
-        }
-        alldata()
-      }
+  useEffect(() => {
+    alldata();
+  }, []);
 
-    //--------------------------------------------------------- Get Data by date request ------------------------------------------------------------
+  // update handlers
+  const updateData = (e) => {
+    setUpdate({ ...update, [e.target.name]: e.target.value });
+  };
 
-    
+  const updateRow = async () => {
+    try {
+      const obj = {
+        date: updatedate,
+        microchip: updateMicrochip,
+      };
+      const combinedObj = { ...update, ...obj };
+      await axios.put(
+        `${process.env.REACT_APP_DEVELOPMENT}/api/updatereceipt/${update._id}`,
+        combinedObj
+      );
+      setShowDialog(false);
+      alldata();
+    } catch (error) {
+      console.error("Update error:", error);
+    }
+  };
+
+  // date-range submit
   const onSubmit = async (formValues) => {
     try {
       const payload = {
@@ -126,418 +98,452 @@ function Previousreport() {
         to: dayjs(value1).format("YYYY/MM/DD"),
         ...formValues,
       };
-
-      // console.log("📤 Payload:", payload);
-
       const response = await axios.post(
         `${process.env.REACT_APP_DEVELOPMENT}/api/monthlyreportQGl`,
         payload
       );
-      // console.log("✅ Response:", response.data.data);
-      setData(response.data.data); 
+      setData(response.data.data || []);
     } catch (error) {
-      console.error("❌ Error in onSubmit:", error);
+      console.error("onSubmit error:", error);
     }
   };
 
-  console.log(data,'Data here')
-      // console.log(data,'data')
-  
-  // ------------------------------------------Get api here -------------------------------------------------------------
-
-      const alldata= async()=>{
-        try {
-          await axios.get(`${process.env.REACT_APP_DEVELOPMENT}/api/getreceipt`)
-          .then(response=>{
-            // setData(response.data)
-            let arr = response.data.map((item,index) =>({
-              ...item,
-              doc: `\u200B${item.doc}`,
-              id:index +1,
-             
-            }));
-            setData(arr)
-          })
-        } catch (error) {
-          console.log(error)
-          
-        }
-      }
-
-
-const handleExportExcel = (evt, selectedRows) => {
-  const handleMoment = (date) =>
-    date ? moment.parseZone(date).local().format("DD/MM/YYYY hh:mm:ss A") : null;
-
-  const filterData = (selectedRows?.length > 0 ? selectedRows : data).map(item => ({
-    "Doc": item.doc,
-    "Date": handleMoment(item.date),
-    "Name": item.name,
-    "Amount": item.amount,
-    "Membership": item.membership,
-    "Telephone": item.telephone,
-    "Payment Method": item.cash,
-    "Being": item.being,
-    "Category": item.category,
-    "Microchip": handleMoment(item.microchip),
-
-
-  }));
-
-  const worksheet = XLSX.utils.json_to_sheet(filterData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-  const excelBuffer = XLSX.write(workbook, {
-    bookType: 'xlsx',
-    type: 'array'
-  });
-  saveAs(new Blob([excelBuffer], { type: 'application/octet-stream' }), 'Previous Details.xlsx');
-};
-
-useEffect(()=>{
-  alldata()
-},[])
-
-
-
-  // ------------------------------------------Delete api here -------------------------------------------------------------
-  const deleteRow = async (update)=> {
+  // delete
+  const deleteRow = async (upd) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_DEVELOPMENT}/api/deletereceipt/${update._id}`,update)
-      .then(response=>{
-        console.log(response)
-        alldata()
-      })
-      setAlert(false)
+      await axios.delete(`${process.env.REACT_APP_DEVELOPMENT}/api/deletereceipt/${upd._id}`);
+      setAlert(false);
+      alldata();
     } catch (error) {
-      console.log(error)
+      console.error("Delete error:", error);
     }
-    
-  }
+  };
 
-  // ------------------------------------------Print code here -------------------------------------------------------------
+  // print
+  const clickPrintIcon = (row) => {
+    navigate("/Receiptpdf", { state: { data: row } });
+  };
 
-  const clickPrintIcon=(row)=>{
-    // setprintData(row)
-    history.push('/Receiptpdf', { data:row });
-    console.log(row,"After clicking clickpritn icon")
-  }
+  // row click
+  const handleRowClick = (params) => {
+    setUpdate(params.row);
+  };
 
-  // ------------------------------------------Row Data get  code here -------------------------------------------------------------
+  // export to excel
+  const handleExportExcel = (selectedRows = []) => {
+    const handleMoment = (date) =>
+      date ? moment.parseZone(date).local().format("DD/MM/YYYY hh:mm:ss A") : null;
 
-const handleRowClick=(event,rowData)=>{
-  setUpdate(rowData)
-}
+    const rowsToExport = (selectedRows.length > 0 ? selectedRows : data).map((item) => ({
+      Doc: item.doc,
+      Date: handleMoment(item.date),
+      Name: item.name,
+      Amount: item.amount,
+      Membership: item.membership,
+      Telephone: item.telephone,
+      "Payment Method": item.cash,
+      Being: item.being,
+      Category: item.category,
+      Microchip: handleMoment(item.microchip),
+    }));
 
+    const worksheet = XLSX.utils.json_to_sheet(rowsToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    saveAs(new Blob([excelBuffer], { type: "application/octet-stream" }), "Previous Details.xlsx");
+  };
 
+  // DataGrid toolbar (search + export button)
+  function CustomToolbar({ selectedRows }) {
     return (
-      <div className="page-container">
+      <GridToolbarContainer>
+        <Box sx={{ flexGrow: 1 }}>
+          <GridToolbarQuickFilter />
+        </Box>
 
-  
-        <div className="row ">
-            <div className="col-xs-12 col-sm-12 col-md-2 col-lg-2 col-xl-2">
-            <Dashhead id={2} display={display} />
-            </div>
+        <Button
+          size="small"
+          onClick={() => handleExportExcel(selectedRows)}
+          variant="contained"
+          sx={{ mr: 1 }}
+        >
+          Export Excel
+        </Button>
 
-            <div className="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xl-10 dashboard-container" onClick={()=>display&&setDisplay(false)}>
-            <span className="iconbutton display-mobile">
-            <IconButton  size="large" aria-label="Menu" onClick={()=>setDisplay(true)}>
-            <MenuIcon fontSize="inherit" />
-             </IconButton>
-             </span>
+        {/* <GridToolbarExport csvOptions={{ fileName: "previous-details" }} /> */}
+      </GridToolbarContainer>
+    );
+  }
 
-                <h1 className='title text-center my-5'>Previous Details</h1>
-                <div >
+  // columns for DataGrid
+  const columns = [
+    { field: "id", headerName: "ID", width: 70 },
+    { field: "doc", headerName: "Doc", width: 90 },
+    {
+      field: "date",
+      headerName: "Date",
+      width: 130,
+      valueGetter: (params) => params.row.date,
+      renderCell: (params) => (params.value ? moment(params.value).format("DD/MM/YYYY") : ""),
+    },
+    { field: "name", headerName: "Name", width: 180 },
+    { field: "amount", headerName: "Amount", width: 120 },
+    { field: "membership", headerName: "Membership", width: 140 },
+    { field: "telephone", headerName: "Telephone", width: 140 },
+    { field: "cash", headerName: "Payment Method", width: 150 },
+    { field: "being", headerName: "Being", width: 150 },
+    { field: "category", headerName: "Category", width: 120 },
+    {
+      field: "microchip",
+      headerName: "Microchip",
+      width: 150,
+      renderCell: (params) => (params.value ? moment(params.value).format("DD/MM/YYYY") : ""),
+    },
+    {
+      field: "edit",
+      headerName: "Edit",
+      width: 80,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <IconButton
+          onClick={() => {
+            setUpdate(params.row);
+            setShowDialog(true);
+          }}
+        >
+          <EditIcon />
+        </IconButton>
+      ),
+    },
+    {
+      field: "delete",
+      headerName: "Delete",
+      width: 90,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <IconButton
+          onClick={() => {
+            setUpdate(params.row);
+            setAlert(true);
+          }}
+        >
+          <DeleteIcon />
+        </IconButton>
+      ),
+    },
+    {
+      field: "print",
+      headerName: "Print",
+      width: 80,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <IconButton onClick={() => clickPrintIcon(params.row)}>
+          <PrintIcon />
+        </IconButton>
+      ),
+    },
+  ];
 
-                <Container>
-   
-{alert && (
-  <div class="modal" style={{ display: alert ? "block" : "none" }}>
-    <div class="modal-dialog" style={{ height: 600 }}>
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Delete Row</h5>
-        </div>
-        <div class="modal-body">
-          <p>Are you sure you want to delete this?</p>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-primary"
-            onClick={() => deleteRow(update)}
-          >
-            Yes
-          </button>
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-dismiss="modal"
-            onClick={() => setAlert(false)}
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+  const [selectedRowIds, setSelectedRowIds] = useState([]);
 
-     {/* This Dialog box is update  */}
-        {update && (
- 
-      <Dialog open={showDialog} style={{ height: 600 }}>
-  <DialogTitle>Update Data</DialogTitle>
-  <DialogContent>
-    <form>
-      <div className="row">
-        <div className="col-6">
-          <div className="mb-3">
-            <label for="doc" class="form-label">Doc No</label>
-            <input
-              type="text"
-              class="form-control"
-              id="doc"
-              name="doc"
-              value={update.doc}
-              onChange={updateData}
-              required
-            />
-          </div>
-        </div>
-        <div className="col-6 mt-4">
-
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                  name="date"
-                  // Adjust the padding value as needed
-                    sx={{ width: 230 }}
-                    label="Date"
-                    value={dayjs(update.date)}
-                      onChange={(newValue) => {
-                        setupdatedate(newValue);
-                      }}
-                      format ="DD/MM/YYYY"
-                    renderInput={(params) => (
-                      <TextField name="date" {...params}      />
-                    )}
-                  />
-                </LocalizationProvider>
-        </div>
-
-        <div class="col-12">
-          <div class="mb-3">
-            <label for="name" class="form-label">Received From Mr/Mrs</label>
-            <input
-              type="text"
-              class="form-control"
-              id="name"
-              name="name"
-              value={update.name}
-              onChange={updateData}
-              required
-            />
-          </div>
-        </div>
-        <div class="col-12">
-          <div class="mb-3">
-            <label for="name" class="form-label">Tele Phone</label>
-            <input
-              type="text"
-              class="form-control"
-              id="name"
-              name="name"
-              value={update.telephone}
-              onChange={updateData}
-              required
-            />
-          </div>
+  return (
+    <div className="page-container">
+      <div className="row ">
+        <div className="col-xs-12 col-sm-12 col-md-2 col-lg-2 col-xl-2">
+          <Dashhead id={2} display={display} />
         </div>
 
-        <div class="col-12">
-          <div class="mb-3">
-            <label for="amount" class="form-label">The Amount Paid</label>
-            <input
-              type="number"
-              class="form-control"
-              id="amount"
-              name="amount"
-              value={update.amount}
-              onChange={updateData}
-              required
-            />
-          </div>
-        </div>
+        <div
+          className="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xl-10 dashboard-container"
+          onClick={() => display && setDisplay(false)}
+        >
+          <span className="iconbutton display-mobile">
+            <IconButton size="large" aria-label="Menu" onClick={() => setDisplay(true)}>
+              <MenuIcon fontSize="inherit" />
+            </IconButton>
+          </span>
 
-        <div class="col-12">
-          <div class="mb-3">
-            <label for="membership" class="form-label">Membership No</label>
-            <input
-              type="text"
-              class="form-control"
-              id="membership"
-              name="membership"
-              value={update.membership}
-              onChange={updateData}
-              required
-            />
-          </div>
-        </div>
-        <div class="col-12">
-          <div class="mb-3">
-            <label for="membership" class="form-label">category</label>
-            <input
-              type="text"
-              class="form-control"
-              id="membership"
-              name="category"
-              value={update.category}
-              onChange={updateData}
-              required
-            />
-          </div>
-        </div>
+          <h1 className="title text-center my-5">Previous Details</h1>
 
-        <div class="col-12">
-          <div class="mb-3">
-            <label for="cash" class="form-label">Cash</label>
-            <input
-              type="text"
-              class="form-control"
-              id="cash"
-              name="cash"
-              value={update.cash}
-              onChange={updateData}
-              required
-            />
-          </div>
-        </div>
+          <Container>
+            {alert && (
+              <div className="modal" style={{ display: alert ? "block" : "none" }}>
+                <div className="modal-dialog" style={{ height: 600 }}>
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title">Delete Row</h5>
+                    </div>
+                    <div className="modal-body">
+                      <p>Are you sure you want to delete this?</p>
+                    </div>
+                    <div className="modal-footer">
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => deleteRow(update)}
+                      >
+                        Yes
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        data-dismiss="modal"
+                        onClick={() => setAlert(false)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
-        <div class="col-12">
-          <div class="mb-3">
-            <label for="being" class="form-label">Being for</label>
-            <input
-              type="text"
-              class="form-control"
-              id="being"
-              name="being"
-              value={update.being}
-              onChange={updateData}
-            />
-          </div>
-        </div>
+            {/* Update dialog */}
+            {update && (
+              <Dialog open={showDialog} style={{ height: 600 }}>
+                <DialogTitle>Update Data</DialogTitle>
+                <DialogContent>
+                  <form>
+                    <div className="row">
+                      <div className="col-6">
+                        <div className="mb-3">
+                          <label htmlFor="doc" className="form-label">
+                            Doc No
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="doc"
+                            name="doc"
+                            value={update.doc || ""}
+                            onChange={updateData}
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="col-6 mt-4">
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            name="date"
+                            sx={{ width: 230 }}
+                            label="Date"
+                            value={update.date ? dayjs(update.date) : updatedate}
+                            onChange={(newValue) => setupdatedate(newValue)}
+                            format="DD/MM/YYYY"
+                            renderInput={(params) => <TextField name="date" {...params} />}
+                          />
+                        </LocalizationProvider>
+                      </div>
 
-        <div class="col-12">
-   
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                  name="date"
-                    sx={{ width: 500 }}
-                    format="DD/MM/YYYY"
-                    label="Date of Microchip implementation"
-                    value={update.microchip?dayjs(update.microchip):""}
-                      onChange={(newValue) => {
-                        setupdateMicrochip(newValue);
-                      }}
-                    renderInput={(params) => (
-                      <TextField name="date" {...params}      />
-                    )}
-                  />
-                </LocalizationProvider>
-        </div>
-      </div>
-    </form>
-  </DialogContent>
-  <DialogActions>
-    <button type="button" class="btn btn-primary" onClick={updateRow}>Update</button>
-    <button type="button" class="btn btn-danger" onClick={() => setShowDialog(false)}>Cancel</button>
-  </DialogActions>
-</Dialog>
+                      <div className="col-12">
+                        <div className="mb-3">
+                          <label htmlFor="name" className="form-label">
+                            Received From Mr/Mrs
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="name"
+                            name="name"
+                            value={update.name || ""}
+                            onChange={updateData}
+                            required
+                          />
+                        </div>
+                      </div>
 
-        )}
+                      <div className="col-12">
+                        <div className="mb-3">
+                          <label htmlFor="telephone" className="form-label">
+                            Tele Phone
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="telephone"
+                            name="telephone"
+                            value={update.telephone || ""}
+                            onChange={updateData}
+                            required
+                          />
+                        </div>
+                      </div>
 
-</Container>
-<form onSubmit={handleSubmit(onSubmit)}>
-<Stack
-            direction="row"
-            spacing={2}
-            margin="23px"
-            justifyContent="center"
-          >
-            <section >
-          
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <div className="col-12">
+                        <div className="mb-3">
+                          <label htmlFor="amount" className="form-label">
+                            The Amount Paid
+                          </label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            id="amount"
+                            name="amount"
+                            value={update.amount || ""}
+                            onChange={updateData}
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="col-12">
+                        <div className="mb-3">
+                          <label htmlFor="membership" className="form-label">
+                            Membership No
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="membership"
+                            name="membership"
+                            value={update.membership || ""}
+                            onChange={updateData}
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="col-12">
+                        <div className="mb-3">
+                          <label htmlFor="category" className="form-label">
+                            Category
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="category"
+                            name="category"
+                            value={update.category || ""}
+                            onChange={updateData}
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="col-12">
+                        <div className="mb-3">
+                          <label htmlFor="cash" className="form-label">
+                            Cash
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="cash"
+                            name="cash"
+                            value={update.cash || ""}
+                            onChange={updateData}
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="col-12">
+                        <div className="mb-3">
+                          <label htmlFor="being" className="form-label">
+                            Being for
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="being"
+                            name="being"
+                            value={update.being || ""}
+                            onChange={updateData}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="col-12">
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            name="microchip"
+                            sx={{ width: 500 }}
+                            format="DD/MM/YYYY"
+                            label="Date of Microchip implementation"
+                            value={update.microchip ? dayjs(update.microchip) : updateMicrochip}
+                            onChange={(newValue) => setupdateMicrochip(newValue)}
+                            renderInput={(params) => <TextField name="date" {...params} />}
+                          />
+                        </LocalizationProvider>
+                      </div>
+                    </div>
+                  </form>
+                </DialogContent>
+                <DialogActions>
+                  <Button variant="contained" onClick={updateRow}>
+                    Update
+                  </Button>
+                  <Button variant="contained" color="error" onClick={() => setShowDialog(false)}>
+                    Cancel
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            )}
+          </Container>
+
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Stack direction="row" spacing={2} margin="23px" justifyContent="center">
+              <section>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     sx={{ width: 300 }}
                     label="From"
                     format="DD/MM/YYYY"
                     views={["year", "month", "day"]}
-                   value={value}
-                  onChange={(newValue) => setValue(newValue)}
-                    renderInput={(params) => (
-                      <TextField name="date" {...params} />
-                    )}
+                    value={value}
+                    onChange={(newValue) => setValue(newValue)}
+                    renderInput={(params) => <TextField name="date" {...params} />}
                   />
                 </LocalizationProvider>
-            </section>
-            <section>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              </section>
+              <section>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     sx={{ width: 300 }}
                     label="To"
                     format="DD/MM/YYYY"
                     views={["year", "month", "day"]}
-                   value={value1}
-                  onChange={(newValue) => setValue1(newValue)}
-                    renderInput={(params) => (
-                      <TextField name="date" {...params} />
-                    )}
+                    value={value1}
+                    onChange={(newValue) => setValue1(newValue)}
+                    renderInput={(params) => <TextField name="date" {...params} />}
                   />
                 </LocalizationProvider>
-            </section>
-            <button type="submit" class="btn btn-primary" >submit</button>
-          </Stack>
-            </form>
-          <div className="" >
-          <Paper >
-  <MaterialTable
-      title="Previous Details"
-      columns={columns}
-      data={data}       
-     onRowClick={(event,rowData)=>handleRowClick(event,rowData)}
-      options={{
-        maxBodyHeight: '500px', // Adjust height as needed
-        maxBodyWidth: '600px', // Adjust width as needed
-        headerStyle: {
-          fontWeight: 'bold',
-        },
-        // exportButton: true,
-        pageSize: 500, // Set the initial page size to 100
-        pageSizeOptions: [1000,3000,4000], // Provide an array of possible page sizes
-        // paging: false, // Disable pagination
-        search: true,
-        filtering:true
-      }}
-      actions={[
-    {
-      icon: 'save_alt',
-      tooltip: 'Export to Excel',
-      isFreeAction: true,
-      onClick: (event) => handleExportExcel(event, data)
-    }
-  ]}
-    /> 
-    </Paper>
-          </div>
-      
-    </div>
+              </section>
+              <Button type="submit" variant="contained">
+                Submit
+              </Button>
+            </Stack>
+          </form>
 
-
-
-             </div>
+          <Paper sx={{ height: 600, width: "100%", mt: 2 }}>
+            <DataGrid
+              rows={data}
+              columns={columns}
+              pageSize={10}
+              rowsPerPageOptions={[5, 10, 25]}
+              checkboxSelection
+              disableSelectionOnClick
+              onRowClick={handleRowClick}
+              onSelectionModelChange={(ids) => setSelectedRowIds(ids)}
+              getRowId={(row) => row._id}
+              components={{
+                Toolbar: (props) => (
+                  <CustomToolbar
+                    selectedRows={selectedRowIds.map((id) => data.find((r) => r.id === id))}
+                    {...props}
+                  />
+                ),
+              }}
+            />
+          </Paper>
+        </div>
+      </div>
     </div>
-    </div>
-    )
+  );
 }
 
-export default Previousreport
+export default Previousreport;

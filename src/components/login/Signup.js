@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { CssBaseline, Container, TextField, Typography, Button, Paper, IconButton } from '@mui/material';
+import { CssBaseline, Container, Typography, Button, Paper, IconButton } from '@mui/material';
+import TextField from '@mui/material/TextField';
 import { AccountCircle } from '@mui/icons-material'; // Import icons
 import logo from '../../images/logo.png';
 import axios from 'axios';
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useNavigate } from "react-router-dom";
 import { useForm } from 'react-hook-form';
 import './signup.scss'
 import InputAdornment from '@mui/material/InputAdornment';
@@ -50,7 +51,6 @@ const useStyles = {
       position: 'relative',
     right: '65px',
     bottom: '65px',
-    bottom: '65px',
   },
   customButton: {
     background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
@@ -76,8 +76,8 @@ const Signup = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(true);
  
-  const history = useHistory();
-  const { register, handleSubmit, formState: { errors } } = useForm();
+    const navigate = useNavigate();
+  const { register, handleSubmit } = useForm();
 
   const onSubmit = async (data) => {
     try {
@@ -90,10 +90,10 @@ const Signup = () => {
   
       if (accessToken) {
         sessionStorage.setItem('accessToken', accessToken);
-        setIsAuthenticated(true);
+        // setIsAuthenticated(true);
         setShowLoginForm(false);
         setTimeout(() => {
-          history.push({pathname:'/Home'});
+            navigate("/Receipt");
         }, 500);
       } else {
         throw new Error('Authentication failed');
@@ -192,9 +192,7 @@ const Signup = () => {
             </Button>
             <ToastContainer />
           </form>
-          {/* <Link href="#" color="primary" style={useStyles.link}>
-            signUp
-          </Link> */}
+    
         </Paper>
       </Container>
       ):""

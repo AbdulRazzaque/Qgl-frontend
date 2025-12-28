@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./genetic.css"; // updated styles (see below)
 import {
+  Autocomplete,
+  Box,
   Button,
   Card,
+  Checkbox,
   FormControl,
   FormControlLabel,
+  FormGroup,
   InputLabel,
   MenuItem,
   Radio,
@@ -15,9 +19,8 @@ import {
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs from "dayjs";
-import Barcode from "../barcode/Barcode";
 import GeneticBarcode from "../barcode/GeneticBarcode";
 function makeEmptyPerson() {
   return {
@@ -40,7 +43,7 @@ function makeEmptyRecord() {
   };
 }
 
-export default function GeneticFormImproved({data}) {
+export default function GeneticFormImproved({ data }) {
   const [customer, setCustomer] = useState({
     name: "",
     tel: "",
@@ -49,9 +52,9 @@ export default function GeneticFormImproved({data}) {
     processing: "Normal",
   });
 
-  useEffect(()=>{
-    if(data){
-        setCustomer({
+  useEffect(() => {
+    if (data) {
+      setCustomer({
         name: data.name || "",
         tel: data.telephone || "",
         submissionDate: data.microchip || "",
@@ -59,9 +62,9 @@ export default function GeneticFormImproved({data}) {
         processing: "Normal",
       });
     }
-  },[data])
+  }, [data]);
   const [animals, setAnimals] = useState([makeEmptyRecord()]);
- const [age, setAge] = useState('');
+  const [age, setAge] = useState("");
   // --- customer handlers
   function updateCustomer(field, value) {
     setCustomer((prev) => ({ ...prev, [field]: value }));
@@ -97,7 +100,6 @@ export default function GeneticFormImproved({data}) {
     console.log("Submitting payload:", payload);
     alert("Form submitted — open console for payload");
   }
-  
 
   const handleChange = (event) => {
     setAge(event.target.value);
@@ -131,7 +133,7 @@ export default function GeneticFormImproved({data}) {
 
           {/* Top details */}
           <section className="row g-3">
-            <div className="col-lg-10">
+            <div className="col-lg-8">
               <div className="row g-2 align-items-center">
                 <Typography className="col-sm-3 col-form-label ">
                   Customer Name
@@ -140,7 +142,7 @@ export default function GeneticFormImproved({data}) {
                   <TextField
                     label="Owner Name"
                     value={customer.name}
-                    sx={{ width: 500 }}
+                    fullWidth
                     InputProps={{
                       readOnly: true,
                     }}
@@ -154,7 +156,7 @@ export default function GeneticFormImproved({data}) {
                   <TextField
                     label="TelePhone Number"
                     value={customer.tel}
-                    sx={{ width: 500 }}
+                    fullWidth
                     placeholder="+974 5xx xxxxx"
                     InputProps={{
                       readOnly: true,
@@ -163,18 +165,15 @@ export default function GeneticFormImproved({data}) {
                 </div>
 
                 <Typography className="col-sm-3 col-form-label ">
-                  TelePhone Number
+                  Date of Microchip
                 </Typography>
                 <div className="col-sm-9">
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                      sx={{ width: 500 }}
+                      sx={{ width: "100%" }}
                       label="Date of Microchip implementation"
-                      value={dayjs( customer.submissionDate)}
+                      value={dayjs(customer.submissionDate)}
                       format="DD/MM/YYYY"
-                      // onChange={(newValue) => {
-                      //   setMicrochip(newValue);
-                      // }}
                       renderInput={(params) => (
                         <TextField name="date" {...params} />
                       )}
@@ -189,7 +188,7 @@ export default function GeneticFormImproved({data}) {
                     <RadioGroup
                       row
                       aria-labelledby="demo-row-radio-buttons-group-label"
-                      defaultValue='blood'
+                      defaultValue="blood"
                       name="row-radio-buttons-group"
                     >
                       <FormControlLabel
@@ -219,7 +218,7 @@ export default function GeneticFormImproved({data}) {
                       row
                       aria-labelledby="demo-row-radio-buttons-group-label"
                       name="row-radio-buttons-group"
-                      defaultValue='normal'
+                      defaultValue="normal"
                     >
                       <FormControlLabel
                         value="normal"
@@ -231,23 +230,19 @@ export default function GeneticFormImproved({data}) {
                         control={<Radio />}
                         label="Urgent"
                       />
-
                     </RadioGroup>
                   </FormControl>
                 </div>
-                <div>
-                </div>
               </div>
             </div>
-          
- <div className="col-2">
-  <div className="barcode-wrapper">
-    {data && <GeneticBarcode data={data} />}
-  </div>
-</div>
 
+            <div className="col-lg-4 d-flex align-items-start justify-content-center">
+              <div className="barcode-wrapper">
+                {data && <GeneticBarcode data={data} />}
+              </div>
+            </div>
           </section>
-         
+
           {/* Animal records */}
           <section className="mt-4">
             {animals.map((rec, idx) => (
@@ -262,7 +257,9 @@ export default function GeneticFormImproved({data}) {
 
                   <div className="d-flex align-items-center gap-2">
                     <Button
-                      variant="outlined" color="error" startIcon={<DeleteIcon color="error"/>}
+                      variant="outlined"
+                      color="error"
+                      startIcon={<DeleteIcon color="error" />}
                       className="btn btn-sm btn-outline-danger"
                       onClick={() => removeAnimal(rec.uid)}
                       disabled={animals.length === 1}
@@ -278,140 +275,201 @@ export default function GeneticFormImproved({data}) {
                 </div>
 
                 <Card sx={{ padding: 3, boxShadow: 4, borderRadius: 3 }}>
-  <Typography variant="h5" sx={{ fontWeight: 600, marginBottom: 3 }}>
-    Animal Information
-  </Typography>
 
-  <div className="row">
-    {[
-      { key: "camel", title: "Camel Information" },
-      { key: "father", title: "Father Information" },
-      { key: "mother", title: "Mother Information" },
-    ].map((col) => (
-      <div key={col.key} className="col-md-4 mb-4">
-        <Card sx={{ padding: 2, borderRadius: 2, boxShadow: 2 }}>
-          <Typography
-            variant="subtitle1"
-            sx={{
-              fontWeight: 600,
-              marginBottom: 2,
-              borderBottom: "1px solid #ccc",
-              paddingBottom: 1,
-            }}
-          >
-            {col.title}
-          </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginBottom: 3,
+                    }}
+                  >
+                    <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                      Animal Information
+                    </Typography>
 
-          <div className="mb-2">
-            <TextField
-              label="Name"
-              value={rec[col.key].name}
-              onChange={(e) =>
-                updateAnimal(rec.uid, col.key, "name", e.target.value)
-              }
-              fullWidth
-              placeholder="Enter Camel Name"
-            />
-          </div>
+                    <FormGroup>
+                      <FormControlLabel
+                        control={<Checkbox />}
+                        label="Verify"
+                      />
+                    </FormGroup>
+                  </Box>
+                  <div className="row">
+                    {[
+                      { key: "camel", title: "Camel Information" },
+                      { key: "father", title: "Father Information" },
+                      { key: "mother", title: "Mother Information" },
+                    ].map((col) => (
+                      <div key={col.key} className="col-md-4 mb-4">
+                        <Card
+                          sx={{ padding: 2, borderRadius: 2, boxShadow: 2 }}
+                        >
+                          <Typography
+                            variant="subtitle1"
+                            sx={{
+                              fontWeight: 600,
+                              marginBottom: 2,
+                              borderBottom: "1px solid #ccc",
+                              paddingBottom: 1,
+                            }}
+                          >
+                            {col.title}
+                          </Typography>
 
-          <div className="mb-2">
-            <TextField
-              label="Microchip"
-              value={rec[col.key].id}
-              onChange={(e) =>
-                updateAnimal(rec.uid, col.key, "id", e.target.value)
-              }
-              fullWidth
-              placeholder="Enter Microchip"
-            />
-          </div>
-           {col.key === "camel" ? (
-  // For camel: show Age and Sex side-by-side
-  <div className="row mb-2">
-    <div className="col-6">
-      <TextField
-        label="Age"
-        value={rec[col.key].age}
-        onChange={(e) =>
-          updateAnimal(rec.uid, col.key, "age", e.target.value)
-        }
-        fullWidth
-        placeholder="Enter Age"
-      />
-    </div>
-    <div className="col-6">
-      <FormControl fullWidth>
-        <InputLabel id={`sex-label-${rec.uid}`}>Sex</InputLabel>
-        <Select
-          labelId={`sex-label-${rec.uid}`}
-          value={rec[col.key].sex}
-          label="Sex"
-          onChange={(e) =>
-            updateAnimal(rec.uid, col.key, "sex", e.target.value)
-          }
-        >
-          <MenuItem value="male">Male</MenuItem>
-          <MenuItem value="female">Female</MenuItem>
-        </Select>
-      </FormControl>
-    </div>
-  </div>
-) : (
-  // For father and mother: only Age (full width)
-  <div className="mb-2">
-    <TextField
-      label="Age"
-      value={rec[col.key].age}
-      onChange={(e) =>
-        updateAnimal(rec.uid, col.key, "age", e.target.value)
-      }
-      fullWidth
-      placeholder="Enter Age"
-    />
-  </div>
-)}
-         
+                          <div className="mb-2">
 
-          <div className="mb-2">
-            <TextField
-              label="Breed"
-              value={rec[col.key].breed}
-              onChange={(e) =>
-                updateAnimal(rec.uid, col.key, "breed", e.target.value)
-              }
-              fullWidth
-              placeholder="Enter Breed"
-            />
-          </div>
+                            <Autocomplete
+                              disablePortal
+                              options={[]}
+                              value={rec[col.key].name}
+                              onChange={(e) =>
+                                updateAnimal(
+                                  rec.uid,
+                                  col.key,
+                                  "name",
+                                  e.target.value
+                                )
+                              }
+                              fullWidth
+                              renderInput={(params) => <TextField {...params} label="Search Camel Name" />}
+                            />
+                          </div>
 
-          <div className="mb-2">
-            <TextField
-              label="Owner"
-              value={rec[col.key].owner}
-              onChange={(e) =>
-                updateAnimal(rec.uid, col.key, "owner", e.target.value)
-              }
-              fullWidth
-              placeholder="Enter Owner Name"
-            />
-          </div>
+                          <div className="mb-2">
+                            <TextField
+                              label="Microchip"
+                              value={rec[col.key].id}
+                              onChange={(e) =>
+                                updateAnimal(
+                                  rec.uid,
+                                  col.key,
+                                  "id",
+                                  e.target.value
+                                )
+                              }
+                              fullWidth
+                              placeholder="Enter Microchip"
+                            />
+                          </div>
+                          {col.key === "camel" ? (
+                            // For camel: show Age and Sex side-by-side
+                            <div className="row mb-2">
+                              <div className="col-6">
+                                <TextField
+                                  label="Age"
+                                  value={rec[col.key].age}
+                                  onChange={(e) =>
+                                    updateAnimal(
+                                      rec.uid,
+                                      col.key,
+                                      "age",
+                                      e.target.value
+                                    )
+                                  }
+                                  fullWidth
+                                  placeholder="Enter Age"
+                                />
+                              </div>
+                              <div className="col-6">
+                                <FormControl fullWidth>
+                                  <InputLabel id={`sex-label-${rec.uid}`}>
+                                    Sex
+                                  </InputLabel>
+                                  <Select
+                                    labelId={`sex-label-${rec.uid}`}
+                                    value={rec[col.key].sex}
+                                    label="Sex"
+                                    onChange={(e) =>
+                                      updateAnimal(
+                                        rec.uid,
+                                        col.key,
+                                        "sex",
+                                        e.target.value
+                                      )
+                                    }
+                                  >
+                                    <MenuItem value="male">Male</MenuItem>
+                                    <MenuItem value="female">Female</MenuItem>
+                                  </Select>
+                                </FormControl>
+                              </div>
+                            </div>
+                          ) : (
+                            // For father and mother: only Age (full width)
+                            <div className="mb-2">
+                              <TextField
+                                label="Age"
+                                value={rec[col.key].age}
+                                onChange={(e) =>
+                                  updateAnimal(
+                                    rec.uid,
+                                    col.key,
+                                    "age",
+                                    e.target.value
+                                  )
+                                }
+                                fullWidth
+                                placeholder="Enter Age"
+                              />
+                            </div>
+                          )}
 
-          <div>
-            <TextField
-              label="Lab No"
-              value={rec[col.key].labNo}
-              onChange={(e) =>
-                updateAnimal(rec.uid, col.key, "labNo", e.target.value)
-              }
-              fullWidth
-              placeholder="Enter Lab Number"
-            />
-          </div>
-        </Card>
-      </div>
-    ))}
-  </div>
-</Card>
+                          <div className="mb-2">
+                            <TextField
+                              label="Breed"
+                              value={rec[col.key].breed}
+                              onChange={(e) =>
+                                updateAnimal(
+                                  rec.uid,
+                                  col.key,
+                                  "breed",
+                                  e.target.value
+                                )
+                              }
+                              fullWidth
+                              placeholder="Enter Breed"
+                            />
+                          </div>
+
+                          <div className="mb-2">
+                            <TextField
+                              label="Owner"
+                              value={rec[col.key].owner}
+                              onChange={(e) =>
+                                updateAnimal(
+                                  rec.uid,
+                                  col.key,
+                                  "owner",
+                                  e.target.value
+                                )
+                              }
+                              fullWidth
+                              placeholder="Enter Owner Name"
+                            />
+                          </div>
+
+                          <div>
+                            <TextField
+                              label="Lab No"
+                              value={rec[col.key].labNo}
+                              onChange={(e) =>
+                                updateAnimal(
+                                  rec.uid,
+                                  col.key,
+                                  "labNo",
+                                  e.target.value
+                                )
+                              }
+                              fullWidth
+                              placeholder="Enter Lab Number"
+                            />
+                          </div>
+                        </Card>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
               </div>
             ))}
 
@@ -423,7 +481,6 @@ export default function GeneticFormImproved({data}) {
               >
                 + Add another request
               </Button>
-             
             </div>
           </section>
 
@@ -432,25 +489,14 @@ export default function GeneticFormImproved({data}) {
               Note: Required fields are marked.
             </small>
             <div>
-              <Button variant="contained" type="submit"color="success" className="mx-2">
+              <Button
+                variant="contained"
+                type="submit"
+                color="success"
+                className="mx-2"
+              >
                 Submit
               </Button>
-              {/* <Button
-                variant="contained"
-                className="btn btn-outline-secondary btn-sm"
-                onClick={() => {
-                  setCustomer({
-                    name: "",
-                    tel: "",
-                    submissionDate: "",
-                    sampleType: "Blood",
-                    processing: "Normal",
-                  });
-                  setAnimals([makeEmptyRecord()]);
-                }}
-              >
-                Reset
-              </Button> */}
             </div>
           </footer>
         </div>

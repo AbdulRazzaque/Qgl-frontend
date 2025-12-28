@@ -17,7 +17,7 @@ import Breadcrumb from "../ui/Breadcrumb";
 import { useReceipts } from "../receipts/useReceipts";
 import moment from "moment";
 import GeneticForm from "./GeneticForm";
-import { useNavigate } from "react-router-dom";
+
 
 const GeneticStepper = () => {
   const [display, setDisplay] = React.useState(false);
@@ -39,7 +39,6 @@ const [selectedReceipt, setSelectedReceipt] = useState(null);
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
     { field: "doc", headerName: "Doc", width: 80 },
-    // { field: 'date', headerName: 'Date', width: 130 },
     {
       headerName: "Date",
       field: "date",
@@ -73,7 +72,7 @@ const [selectedReceipt, setSelectedReceipt] = useState(null);
   const handleReset = () => setActiveStep(0);
 
   const { data, isLoading, isError } = useReceipts();
-    const navigate = useNavigate()
+ 
   useEffect(() => {
     if (data) {
       setReceipts(data.receipts);

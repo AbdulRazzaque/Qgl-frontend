@@ -47,6 +47,13 @@ const MENU_ITEMS = [
     icon: <BiotechIcon  />,
     activeIcon: <BiotechIcon  />,
   },
+  {
+    id: 6,
+    label: "Import Camels",
+    path: "/FatherCamel",
+    icon: <NoteAddIcon />,
+    activeIcon: <NoteAddOutlinedIcon />,
+  },
 ];
 
 const Dashhead = ({ id = null, display = true }) => {

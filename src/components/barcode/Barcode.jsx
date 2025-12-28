@@ -16,7 +16,7 @@ function Barcode({ data }) {
 
   useEffect(() => {
     setTimeout(() => {
-      // window.print();
+      window.print();
     }, 1000);
   }, []);
 
@@ -102,3 +102,5 @@ function Barcode({ data }) {
 }
 
 export default Barcode;
+
+

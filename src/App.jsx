@@ -11,6 +11,9 @@ import Genetic from "./components/genetic/Genetic";
 import Receipt from "./components/receipts/Receipt";
 import GeneticStepper from "./components/genetic/GeneticStepper";
 import GeneticForm from "./components/genetic/GeneticForm";
+import FatherCamel from "./components/camel/FatherCamel";
+
+
 
 function App() {
   return (
@@ -89,6 +92,14 @@ function App() {
         </ProtectedRoute>
         
         } />
+      <Route path="/FatherCamel" element={
+        <ProtectedRoute>
+          <FatherCamel />
+        </ProtectedRoute>
+        
+        } />
+   
+
     </Routes>
   );
 }

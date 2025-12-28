@@ -1,7 +1,6 @@
 import React from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import moment from "moment";
-import logo from "../../images/logo.png";
 import { buildQrPayload } from "./barcodeUtils";
 import "./barcode.scss";
 
@@ -32,22 +31,22 @@ function GeneticBarcode({ data }) {
   const payload = buildQrPayload(data);
 
   return (
-    <div className="genetic-barcode-card">
-      {/* TEXT PART */}
-      <div className="genetic-barcode-text">
-        {fields.map((f) => (
-          <div key={f.label} className="genetic-barcode-row">
-            <span className="label">{f.label}:</span>
-            <span className="value">{f.value}</span>
-          </div>
-        ))}
+<div className="genetic-barcode-card">
+  {/* TEXT PART */}
+  <div className="genetic-barcode-text">
+    {fields.map((f) => (
+      <div key={f.label} className="genetic-barcode-row">
+        <span className="label">{f.label}:</span>
+        <span className="value">{f.value}</span>
       </div>
+    ))}
+  </div>
 
-      {/* QR PART */}
-      <div className="genetic-barcode-qr">
-        <QRCodeCanvas value={payload} size={120} level="M" />
-      </div>
-    </div>
+  {/* QR PART */}
+  <div className="genetic-barcode-qr">
+    <QRCodeCanvas value={payload} size={120} level="M" />
+  </div>
+</div>
   );
 }
 

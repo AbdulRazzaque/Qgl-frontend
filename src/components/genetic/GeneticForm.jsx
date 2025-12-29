@@ -22,6 +22,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs from "dayjs";
 import GeneticBarcode from "../barcode/GeneticBarcode";
+import { useGetFatherCamels } from "../camel/useCamel";
+import { toast } from "react-toastify";
+import { useCreateGeneticRecord } from "./useGenetic";
+
 function makeEmptyPerson() {
   return {
     name: "",
@@ -64,11 +68,9 @@ export default function GeneticFormImproved({ data }) {
     }
   }, [data]);
   const [animals, setAnimals] = useState([makeEmptyRecord()]);
-  const [age, setAge] = useState("");
+
   // --- customer handlers
-  function updateCustomer(field, value) {
-    setCustomer((prev) => ({ ...prev, [field]: value }));
-  }
+
 
   // --- animal handlers (section is 'camel' | 'father' | 'mother')
   function updateAnimal(uid, section, field, value) {
@@ -87,23 +89,51 @@ export default function GeneticFormImproved({ data }) {
   function removeAnimal(uid) {
     setAnimals((prev) => prev.filter((r) => r.uid !== uid));
   }
+const { mutateAsync: createRecord, isLoading } = useCreateGeneticRecord();
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    // Basic validation example (visual only). You can extend as needed.
-    const missingCustomer = !customer.name || !customer.tel;
-    if (missingCustomer) {
-      alert("Customer name and telephone required.");
-      return;
-    }
-    const payload = { customer, animals };
-    console.log("Submitting payload:", payload);
-    alert("Form submitted — open console for payload");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!customer.name || !customer.tel) {
+    toast.error("Customer name and telephone required");
+    return;
   }
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
+  const payload = { customer, animals };
+
+  try {
+    await createRecord(payload);
+    toast.success("Record created");
+  } catch (error) {
+    toast.error(error?.message || "Failed to create record");
+  }
+};
+
+  const handleCamelSelect = (uid, section) => (event, newValue) => {
+    if (newValue) {
+      updateAnimal(uid, section, "name", newValue.camelName || "");
+      updateAnimal(uid, section, "id", newValue.microChipId || "");
+      updateAnimal(uid, section, "labNo", newValue.labNO || "");
+      updateAnimal(uid, section, "owner", newValue.ownerName || "");
+      updateAnimal(uid, section, "breed", newValue.breed || "");
+    } else {
+      updateAnimal(uid, section, "name", "");
+      updateAnimal(uid, section, "id", "");
+      updateAnimal(uid, section, "labNo", "");
+      updateAnimal(uid, section, "owner", "");
+      updateAnimal(uid, section, "breed", "");
+    }
   };
+
+  const {
+    data: fatherCamelData,
+    isLoading: fatherCamelLoading,
+    error: fatherCamelError,
+  } = useGetFatherCamels();
+
+
+  const fatherOptions = fatherCamelData?.data || [];
+
 
   return (
     <div className="gen-container py-4">
@@ -321,19 +351,22 @@ export default function GeneticFormImproved({ data }) {
 
                             <Autocomplete
                               disablePortal
-                              options={[]}
-                              value={rec[col.key].name}
-                              onChange={(e) =>
-                                updateAnimal(
-                                  rec.uid,
-                                  col.key,
-                                  "name",
-                                  e.target.value
-                                )
+                              options={fatherOptions}
+                              loading={fatherCamelLoading}
+                              error={fatherCamelError}
+                              getOptionLabel={(option) => `${option.camelName} - ${option.microChipId}` || ""}
+                              value={
+                                fatherOptions.find(
+                                  (c) => c.camelName === rec[col.key].name
+                                ) || null
                               }
+                              onChange={handleCamelSelect(rec.uid, col.key)}
                               fullWidth
-                              renderInput={(params) => <TextField {...params} label="Search Camel Name" />}
+                              renderInput={(params) => (
+                                <TextField {...params} label="Search Camel Name" />
+                              )}
                             />
+
                           </div>
 
                           <div className="mb-2">
@@ -489,14 +522,14 @@ export default function GeneticFormImproved({ data }) {
               Note: Required fields are marked.
             </small>
             <div>
-              <Button
-                variant="contained"
-                type="submit"
-                color="success"
-                className="mx-2"
-              >
-                Submit
-              </Button>
+             <Button
+  variant="contained"
+  type="submit"
+  color="success"
+  disabled={isLoading}
+>
+  {isLoading ? "Submitting..." : "Submit"}
+</Button>
             </div>
           </footer>
         </div>

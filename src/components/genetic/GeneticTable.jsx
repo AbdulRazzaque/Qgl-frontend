@@ -1,51 +1,70 @@
+import React from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import Paper from "@mui/material/Paper";
+import { useGeneticRecord } from "./useGenetic";
+import moment from "moment";
 
-import { DataGrid } from '@mui/x-data-grid';
-import Paper from '@mui/material/Paper';
-// import { getReceipts } from './GeneticApi';
+
 const GeneticTable = () => {
+  const {
+    data,
+    isLoading,
+    error,
+  } = useGeneticRecord();
 
+  if (isLoading) {
+    return <p>Loading genetic records...</p>;
+  }
 
-  const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  ];
+  if (error) {
+    return <p>Error loading data</p>;
+  }
 
+  const records = data?.data || [];
+  console.log(records.customer)
+  const rows = records.map((item, index) => ({
+    id: index + 1,
+    ...item,
+  }));
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'firstName', headerName: 'First name', width: 130 },
-    { field: 'lastName', headerName: 'Last name', width: 130 },
+    { field: "id", headerName: "ID", width: 50 },
+       { field: "createdAt", headerName: "Date", width: 150 },
     {
-      field: 'age',
-      headerName: 'Age',
-      type: 'number',
-      width: 90,
+      field: "customerName", headerName: "Customer", width: 180, valueGetter: (params) =>
+        params.row?.customer?.name || "N/A",
     },
-
+    { field: "tel", headerName: "Telephone", width: 160,valueGetter: (params) =>
+        params.row?.customer?.tel || "N/A", },
+    {
+      field: "sampleType",
+      headerName: "Sample Type",
+      width: 160,
+      valueGetter: (params) =>
+        params.row?.customer?.sampleType || "N/A",
+    },
+    {field: "processing", headerName: "Processing", width: 150,valueGetter: (params) =>
+        params.row?.customer?.processing || "N/A"}, 
+    {field: "submissionDate", headerName: "Submission Date", width: 150,valueGetter: (params) =>
+      moment.parseZone(params.row?.customer?.submissionDate).local().format("YYYY-MM-DD") || "N/A"}, 
   ];
 
-  const paginationModel = { page: 0, pageSize: 5 };
   return (
-    <>
-      <Paper sx={{ height: '100%', width: '90' }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[5, 10]}
-          checkboxSelection
-          sx={{ border: 0 }}
-        />
-      </Paper>
-    </>
-  )
-}
+    <Paper sx={{ height: 500, width: "100%" }}>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        pageSizeOptions={[5, 10, 20]}
+        initialState={{
+          pagination: {
+            paginationModel: { page: 0, pageSize: 10 },
+          },
+        }}
+        checkboxSelection
+        disableRowSelectionOnClick
+      />
+    </Paper>
+  );
+};
 
-export default GeneticTable
+export default GeneticTable;

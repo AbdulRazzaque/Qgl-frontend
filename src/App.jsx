@@ -2,6 +2,7 @@ import "./App.scss";
 import { Routes, Route } from "react-router-dom";
 import Receiptpdf from "./components/Receiptpdf";
 import Signup from "./components/login/Signup";
+import Register from "./components/login/Register";
 import Membership from "./components/membership/Membership";
 import Monthlyreport from "./components/report/Monthlyreport";
 import Previousreport from "./components/report/Previousreport";
@@ -15,11 +16,27 @@ import FatherCamel from "./components/camel/FatherCamel";
 
 
 
+
 function App() {
+  // Role-aware ProtectedRoute for SuperAdmin
+  const SuperAdminRoute = ({ children }) => {
+    const role = sessionStorage.getItem('userRole');
+    if (role !== 'SuperAdmin') {
+      return <Signup />;
+    }
+    return children;
+  };
+
   return (
     <Routes>
       <Route path="/" element={<Signup />} />
-
+      <Route path="/register" element={
+        <ProtectedRoute>
+          <SuperAdminRoute>
+            <Register />
+          </SuperAdminRoute>
+        </ProtectedRoute>
+      } />
       {/* Protected Routes */}
       <Route
         path="/Receipt"
@@ -29,6 +46,13 @@ function App() {
           </ProtectedRoute>
         }
       />
+            <Route path="/FatherCamel" element={
+              <ProtectedRoute>
+                <SuperAdminRoute>
+                  <FatherCamel />
+                </SuperAdminRoute>
+              </ProtectedRoute>
+            } />
       <Route
         path="/Membership"
         element={

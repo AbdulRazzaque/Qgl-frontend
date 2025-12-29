@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../redux/user/userActions';
 import { CssBaseline, Container, Typography, Button, Paper, IconButton } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import { AccountCircle } from '@mui/icons-material'; // Import icons
@@ -72,6 +74,7 @@ const useStyles = {
  
 };
 const Signup = () => {
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(true);
@@ -81,29 +84,22 @@ const Signup = () => {
 
   const onSubmit = async (data) => {
     try {
-
       const res = await axios.post(`${process.env.REACT_APP_DEVELOPMENT}/api/login`, data);
-      console.log(res)
-      const accessToken = res.data.user.name;
-
-     
-  
-      if (accessToken) {
-        sessionStorage.setItem('accessToken', accessToken);
-        // setIsAuthenticated(true);
+      const { user, token, role } = res.data;
+      if (token && user) {
+        sessionStorage.setItem('accessToken', token);
+        sessionStorage.setItem('userRole', role);
+        dispatch(setUser({ ...user, role }));
         setShowLoginForm(false);
         setTimeout(() => {
-            navigate("/Receipt");
+          navigate("/Receipt");
         }, 500);
       } else {
         throw new Error('Authentication failed');
       }
     } catch (error) {
-      console.log('Error:', error);
-      toast(error.response?.data.message || error.response.data.message, {
+      toast(error.response?.data?.message || 'Login failed', {
         position: "top-right",
-
-        
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,

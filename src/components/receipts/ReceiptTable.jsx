@@ -51,6 +51,8 @@ const ReceiptTable = () => {
   }
 
   const columns = [
+    { field: "insertedBy", headerName: "Inserted By", width: 130 },
+    { field: "insertedByRole", headerName: "Role", width: 100 },
   { field: "id", headerName: "ID", width: 50 },
   { field: "doc", headerName: "Doc", width: 80 },
   // { field: 'date', headerName: 'Date', width: 130 },
@@ -137,13 +139,20 @@ const ReceiptTable = () => {
 <>
 
 <div className="my-3">
-         { config.accessToken === "M.Radwan" ?  
-         <Button variant="contained" color="error"  disabled={selectedRows.length === 0} onClick={() => openDialog("delete", selectedRows)}> Delete Rows  <DeleteIcon/></Button>
-          :""}
-       
-        <Button variant="contained" color="success" disabled={selectedData.length === 0} className="mx-5" onClick={() => clickPrintIcon()}> select Pritn <LibraryAddCheckIcon className="mx-2"/></Button>
-        <Button variant="contained" disabled={selectedData.length === 0} className="" onClick={handleBarcodeClick}> select Barcode <QrCode2Icon className="mx-2"/></Button>
-        </div>
+  {(() => {
+    const role = sessionStorage.getItem('userRole');
+    if (role === 'SuperAdmin' || role === 'Admin') {
+      return (
+        <Button variant="contained" color="error" disabled={selectedRows.length === 0} onClick={() => openDialog("delete", selectedRows)}>
+          Delete Rows <DeleteIcon/>
+        </Button>
+      );
+    }
+    return null;
+  })()}
+  <Button variant="contained" color="success" disabled={selectedData.length === 0} className="mx-5" onClick={() => clickPrintIcon()}> select Pritn <LibraryAddCheckIcon className="mx-2"/></Button>
+  <Button variant="contained" disabled={selectedData.length === 0} className="" onClick={handleBarcodeClick}> select Barcode <QrCode2Icon className="mx-2"/></Button>
+</div>
 
      <div style={{ height: 400, width: "100%" }}>
           <DataGrid

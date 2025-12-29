@@ -11,50 +11,56 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import BiotechIcon from "@mui/icons-material/Biotech";
 
-const MENU_ITEMS = [
-  {
-    id: 1,
-    label: "Entry Mode",
-    path: "/Receipt",
-    icon: <ControlPointIcon />,
-    activeIcon: <ControlPointIcon />,
-  },
-  {
-    id: 2,
-    label: "Previous Details",
-    path: "/Previousreport",
-    icon: <NoteAddOutlinedIcon />,
-    activeIcon: <NoteAddIcon />,
-  },
-  {
-    id: 3,
-    label: "Monthly Details",
-    path: "/Monthlyreport",
-    icon: <SummarizeIcon />,
-    activeIcon: <SummarizeIcon />,
-  },
-  {
-    id: 4,
-    label: "MemberShip Form",
-    path: "/Membership",
-    icon: <CardMembershipIcon />,
-    activeIcon: <CardMembershipIcon />,
-  },
-  {
-    id: 5,
-    label: "Genetic",
-    path: "/Genetic",
-    icon: <BiotechIcon  />,
-    activeIcon: <BiotechIcon  />,
-  },
-  {
-    id: 6,
-    label: "Import Camels",
-    path: "/FatherCamel",
-    icon: <NoteAddIcon />,
-    activeIcon: <NoteAddOutlinedIcon />,
-  },
-];
+const getMenuItems = () => {
+  const role = sessionStorage.getItem('userRole');
+  const items = [
+    {
+      id: 1,
+      label: "Entry Mode",
+      path: "/Receipt",
+      icon: <ControlPointIcon />,
+      activeIcon: <ControlPointIcon />,
+    },
+    {
+      id: 2,
+      label: "Previous Details",
+      path: "/Previousreport",
+      icon: <NoteAddOutlinedIcon />,
+      activeIcon: <NoteAddIcon />,
+    },
+    {
+      id: 3,
+      label: "Monthly Details",
+      path: "/Monthlyreport",
+      icon: <SummarizeIcon />,
+      activeIcon: <SummarizeIcon />,
+    },
+    {
+      id: 4,
+      label: "MemberShip Form",
+      path: "/Membership",
+      icon: <CardMembershipIcon />, 
+      activeIcon: <CardMembershipIcon />,
+    },
+    {
+      id: 5,
+      label: "Genetic",
+      path: "/Genetic",
+      icon: <BiotechIcon  />,
+      activeIcon: <BiotechIcon  />,
+    },
+  ];
+  if (role === 'SuperAdmin') {
+    items.push({
+      id: 6,
+      label: "Import Camels",
+      path: "/FatherCamel",
+      icon: <NoteAddIcon />,
+      activeIcon: <NoteAddOutlinedIcon />,
+    });
+  }
+  return items;
+};
 
 const Dashhead = ({ id = null, display = true }) => {
   const navigate = useNavigate();
@@ -76,12 +82,12 @@ const Dashhead = ({ id = null, display = true }) => {
     ? "shadow-lg dashhead"
     : "dashhead displayhidden min-vh-100";
 
+  const menuItems = getMenuItems();
   return (
     <aside className={rootClass} id="sidebar-wrapper" aria-label="sidebar">
       <h1 className="dashhead-brand">QGL</h1>
-
       <nav className="dashhead-menu" aria-label="main menu">
-        {MENU_ITEMS.map((item) => {
+        {menuItems.map((item) => {
           const isActive = id === item.id;
           return (
             <div
@@ -102,7 +108,6 @@ const Dashhead = ({ id = null, display = true }) => {
           );
         })}
       </nav>
-
       <div className="sticky-bottom fixed-bottom ml-1 mb-1 bt">
         <button
           type="button"

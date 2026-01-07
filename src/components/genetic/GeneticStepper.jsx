@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import {
   Box,
-  Button,
   Typography,
   CircularProgress,
 } from "@mui/material";
 import Dashhead from "../Dashhead";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-
 import { DataGrid } from "@mui/x-data-grid";
 import Breadcrumb from "../ui/Breadcrumb";
 import { useReceipts } from "../receipts/useReceipts";
@@ -23,7 +22,16 @@ const GeneticStepper = () => {
   const [display, setDisplay] = React.useState(false);
   const [activeStep, setActiveStep] = React.useState(0);
   const [receipts, setReceipts] = useState([]);
-const [selectedReceipt, setSelectedReceipt] = useState(null);
+  const [selectedReceipt, setSelectedReceipt] = useState(null);
+  const location = useLocation();
+    // Auto-step to update form if navigated from edit icon
+    useEffect(() => {
+      if (location.state && location.state.mode === 'update') {
+        // If coming from edit icon, location.state will have the record and mode
+        setSelectedReceipt(location.state);
+        setActiveStep(1);
+      }
+    }, [location.state]);
   const steps = [
     "Select master blaster campaign settings",
     "Create an ad group",
@@ -65,11 +73,6 @@ const [selectedReceipt, setSelectedReceipt] = useState(null);
           : "",
     },
   ];
-
-  const handleNext = () =>
-    setActiveStep((s) => Math.min(s + 1, steps.length - 1));
-  const handleBack = () => setActiveStep((s) => Math.max(s - 1, 0));
-  const handleReset = () => setActiveStep(0);
 
   const { data, isLoading, isError } = useReceipts();
  
@@ -133,7 +136,7 @@ const [selectedReceipt, setSelectedReceipt] = useState(null);
               ))}
             </Stepper>
           </Box>
-              {activeStep < steps.length - 1 ? (
+              {/* {activeStep < steps.length - 1 ? (
               <Button variant="contained" onClick={handleNext}>
                 Next
               </Button>
@@ -144,7 +147,7 @@ const [selectedReceipt, setSelectedReceipt] = useState(null);
                   Finish
                 </Button>
               </Box>
-            )}
+            )} */}
           {/* Step content area */}
           <Box sx={{ mt: 2 }}>
             {activeStep === 0 && (
@@ -193,9 +196,7 @@ const [selectedReceipt, setSelectedReceipt] = useState(null);
           <Box
             sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 2 }}
           >
-            <Button disabled={activeStep === 0} onClick={handleBack}>
-              Back
-            </Button>
+            
 
            
           </Box>

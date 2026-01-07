@@ -1,3 +1,4 @@
+
 import "./App.scss";
 import { Routes, Route } from "react-router-dom";
 import Receiptpdf from "./components/Receiptpdf";
@@ -13,6 +14,7 @@ import Receipt from "./components/receipts/Receipt";
 import GeneticStepper from "./components/genetic/GeneticStepper";
 import GeneticForm from "./components/genetic/GeneticForm";
 import FatherCamel from "./components/camel/FatherCamel";
+import Dashboard from "./components/Dashboard";
 
 
 
@@ -35,6 +37,11 @@ function App() {
           <SuperAdminRoute>
             <Register />
           </SuperAdminRoute>
+        </ProtectedRoute>
+      } />
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <Dashboard />
         </ProtectedRoute>
       } />
       {/* Protected Routes */}

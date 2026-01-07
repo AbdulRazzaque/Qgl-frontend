@@ -15,6 +15,13 @@ const getMenuItems = () => {
   const role = sessionStorage.getItem('userRole');
   const items = [
     {
+      id: 0,
+      label: "Dashboard",
+      path: "/dashboard",
+      icon: <SummarizeIcon />,
+      activeIcon: <SummarizeIcon />,
+    },
+    {
       id: 1,
       label: "Entry Mode",
       path: "/Receipt",

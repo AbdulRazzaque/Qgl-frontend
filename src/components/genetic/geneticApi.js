@@ -1,4 +1,6 @@
+
 import axios from "axios";
+
 
 export const api = axios.create({
   baseURL: process.env.REACT_APP_DEVELOPMENT,
@@ -8,7 +10,6 @@ export const api = axios.create({
     Accept: "application/json",
   },
 });
-
 
 const handleApiError = (error) => {
   if (error.response) {
@@ -33,9 +34,27 @@ export const createGeneticRecord = async (payload) => {
   }
 };
 
+
+export const updateGeneticRecord = async (id, payload) => {
+  try {
+    const { data } = await api.put(`/api/genetic/updateGeneticRecord/${id}`, payload);
+    return data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
 export const getGeneticRecords = async () => {
   try {
     const { data } = await api.get("/api/genetic/getGeneticRecords");
+    return data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
+
+export const deleteGeneticRecord = async (id) => {
+  try {
+    const { data } = await api.delete(`/api/genetic/deleteGeneticRecord/${id}`);
     return data;
   } catch (error) {
     handleApiError(error);

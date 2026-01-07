@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
 import "./genetic.css"; // updated styles (see below)
 import {
   Autocomplete,
@@ -16,6 +17,11 @@ import {
   Select,
   TextField,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -24,7 +30,10 @@ import dayjs from "dayjs";
 import GeneticBarcode from "../barcode/GeneticBarcode";
 import { useGetFatherCamels } from "../camel/useCamel";
 import { toast } from "react-toastify";
-import { useCreateGeneticRecord } from "./useGenetic";
+import { useCreateGeneticRecord,useUpdateGeneticRecord } from "./useGenetic";
+import { useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
+
 
 function makeEmptyPerson() {
   return {
@@ -38,16 +47,22 @@ function makeEmptyPerson() {
   };
 }
 
+
 function makeEmptyRecord() {
   return {
-    uid: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+    uid: uuidv4(),
     camel: makeEmptyPerson(),
     father: makeEmptyPerson(),
     mother: makeEmptyPerson(),
   };
 }
 
-export default function GeneticFormImproved({ data }) {
+
+export default function GeneticForm({ data }) {
+  // Determine mode
+  const mode = data && data.mode === 'update' ? 'update' : 'create';
+console.log(data?.receiptId,'data customer')
+console.log(data,'data')
   const [customer, setCustomer] = useState({
     name: "",
     tel: "",
@@ -56,19 +71,44 @@ export default function GeneticFormImproved({ data }) {
     processing: "Normal",
   });
 
-  useEffect(() => {
-    if (data) {
-      setCustomer({
-        name: data.name || "",
-        tel: data.telephone || "",
-        submissionDate: data.microchip || "",
-        sampleType: "Blood",
-        processing: "Normal",
-      });
-    }
-  }, [data]);
   const [animals, setAnimals] = useState([makeEmptyRecord()]);
+ 
+  const navigate = useNavigate();
+useEffect(() => {
+  if (mode === "update" && data?.receiptId) {
+    // UPDATE MODE (GeneticRecord + populated Receipt)
+    setCustomer({
+      name: data.receiptId.name || "",
+      tel: data.receiptId.telephone || "",
+      submissionDate: data.receiptId.microchip || "",
+      sampleType: data.sampleType || "Blood",
+      processing: data.processing || "Normal",
+    });
 
+    // Ensure each animal has a unique uid
+    let usedUids = new Set();
+    const animalsWithUid = (Array.isArray(data.animals) && data.animals.length > 0
+      ? data.animals
+      : [makeEmptyRecord()]
+    ).map(animal => {
+      let uid = animal.uid && !usedUids.has(animal.uid) ? animal.uid : uuidv4();
+      usedUids.add(uid);
+      return { ...animal, uid };
+    });
+    setAnimals(animalsWithUid);
+  } else if (data) {
+    // CREATE MODE (Receipt selected from stepper)
+    setCustomer({
+      name: data.name || "",
+      tel: data.telephone || "",
+      submissionDate: data.microchip || "",
+      sampleType: "Blood",
+      processing: "Normal",
+    });
+
+    setAnimals([makeEmptyRecord()]);
+  }
+}, [data, mode]);
   // --- customer handlers
 
 
@@ -87,27 +127,80 @@ export default function GeneticFormImproved({ data }) {
   }
 
   function removeAnimal(uid) {
-    setAnimals((prev) => prev.filter((r) => r.uid !== uid));
+    setAnimals((prev) => {
+      if (prev.length === 1) return prev; // Prevent removing last
+      return prev.filter((r) => r.uid !== uid);
+    });
   }
-const { mutateAsync: createRecord, isLoading } = useCreateGeneticRecord();
+const { mutateAsync: createRecord, isLoading:isCreating } = useCreateGeneticRecord();
+const { mutateAsync: updateRecord, isLoading:isUpdating } = useUpdateGeneticRecord();
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
 
-  if (!customer.name || !customer.tel) {
-    toast.error("Customer name and telephone required");
-    return;
-  }
+  const [openDialog, setOpenDialog] = useState(false);
+  const [pendingSubmit, setPendingSubmit] = useState(null);
 
-  const payload = { customer, animals };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  try {
-    await createRecord(payload);
-    toast.success("Record created");
-  } catch (error) {
-    toast.error(error?.message || "Failed to create record");
-  }
-};
+    if (!Array.isArray(animals) || animals.length === 0) {
+      toast.error("At least one animal record is required");
+      return;
+    }
+
+    if (mode === "update") {
+      setPendingSubmit({});
+      setOpenDialog(true);
+      return;
+    }
+
+    // CREATE MODE
+    if (!data?._id) {
+      toast.error("Receipt not selected");
+      return;
+    }
+
+    try {
+      const payload = {
+        receiptId: data._id, // receipt id
+        animals,
+        sampleType: customer.sampleType,
+        processing: customer.processing,
+      };
+      await createRecord(payload);
+      navigate("/Genetic");
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Operation failed"
+      );
+    }
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+    setPendingSubmit(null);
+  };
+
+  const handleDialogConfirm = async () => {
+    setOpenDialog(false);
+    try {
+      const payload = {
+        animals,
+        sampleType: customer.sampleType,
+        processing: customer.processing,
+      };
+      await updateRecord({
+        id: data._id, // GeneticRecord id
+        payload,
+      });
+      navigate("/Genetic");
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Operation failed"
+      );
+    }
+    setPendingSubmit(null);
+  };
+
 
   const handleCamelSelect = (uid, section) => (event, newValue) => {
     if (newValue) {
@@ -134,10 +227,46 @@ const handleSubmit = async (e) => {
 
   const fatherOptions = fatherCamelData?.data || [];
 
+  const mapBarcodeData = (data) => {
+      if (!data) return null;
+
+  // UPDATE MODE (genetic record)
+  if (data.receiptId) {
+    return {
+      name: data.receiptId.name || "",
+      membership:data.receiptId.membership ||  "",        // not available in genetic record
+      doc: data.receiptId.doc || "",
+      amount: data.receiptId.amount || "",
+      date: data.receiptId.date || "",
+      telephone: data.receiptId.telephone || "",
+      microchip: data.receiptId.microchip || "",
+      userName: data.receiptId.userName || "",
+    };
+  }
+
+  // CREATE MODE (receipt)
+  return data;
+  }
 
   return (
     <div className="gen-container py-4">
       <form onSubmit={handleSubmit} className="gen-card">
+        <Dialog open={openDialog} onClose={handleDialogClose}>
+          <DialogTitle>Confirm Update</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to update this record?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose} color="primary">
+              No
+            </Button>
+            <Button onClick={handleDialogConfirm} color="primary" autoFocus>
+              Yes
+            </Button>
+          </DialogActions>
+        </Dialog>
         <div className="gen-card-body">
           <header className="gen-header d-flex justify-content-between align-items-start mb-3">
             <div>
@@ -150,13 +279,13 @@ const handleSubmit = async (e) => {
 
             <div className="text-end text-muted small gen-meta">
               <div>
-                Member No: <span className="gen-meta-strong">QRAX36</span>
+                Member No: <span className="gen-meta-strong">{data.membership || data?.receiptId?.membership || "N/A"}</span>
               </div>
               <div>
-                Receipt: <span className="gen-meta-strong">29210</span>
+                Receipt: <span className="gen-meta-strong">{data.doc || data?.receiptId?.doc || "N/A"}</span>
               </div>
               <div>
-                Amount: <span className="gen-meta-strong">850.00 QAR</span>
+                Amount: <span className="gen-meta-strong">{ data.amount || data?.receiptId?.amount || "N/A"} QAR</span>
               </div>
             </div>
           </header>
@@ -218,21 +347,27 @@ const handleSubmit = async (e) => {
                     <RadioGroup
                       row
                       aria-labelledby="demo-row-radio-buttons-group-label"
-                      defaultValue="blood"
-                      name="row-radio-buttons-group"
+                      name="sampleType"
+                      value={customer.sampleType}
+                      onChange={(e) =>
+                        setCustomer((prev) => ({
+                          ...prev,
+                          sampleType: e.target.value,
+                        }))
+                      }
                     >
                       <FormControlLabel
-                        value="blood"
+                        value="Blood"
                         control={<Radio />}
                         label="Blood"
                       />
                       <FormControlLabel
-                        value="hair"
+                        value="Hair"
                         control={<Radio />}
                         label="Hair"
                       />
                       <FormControlLabel
-                        value="others"
+                        value="Others"
                         control={<Radio />}
                         label="Others"
                       />
@@ -268,7 +403,7 @@ const handleSubmit = async (e) => {
 
             <div className="col-lg-4 d-flex align-items-start justify-content-center">
               <div className="barcode-wrapper">
-                {data && <GeneticBarcode data={data} />}
+                 {data && <GeneticBarcode data={mapBarcodeData(data)} />}
               </div>
             </div>
           </section>
@@ -281,7 +416,7 @@ const handleSubmit = async (e) => {
                   <div>
                     <h4>Request #{idx + 1}</h4>
                     <span className="badge bg-secondary ms-2">
-                      ID: {rec.uid.slice(-6)}
+                      ID: {rec.uid ? rec.uid.slice(-6) : '------'}
                     </span>
                   </div>
 
@@ -360,10 +495,11 @@ const handleSubmit = async (e) => {
                                   (c) => c.camelName === rec[col.key].name
                                 ) || null
                               }
+                              
                               onChange={handleCamelSelect(rec.uid, col.key)}
                               fullWidth
                               renderInput={(params) => (
-                                <TextField {...params} label="Search Camel Name" />
+                                <TextField {...params} label="Search Camel Name" required />
                               )}
                             />
 
@@ -522,13 +658,23 @@ const handleSubmit = async (e) => {
               Note: Required fields are marked.
             </small>
             <div>
-             <Button
+<Button
   variant="contained"
   type="submit"
   color="success"
-  disabled={isLoading}
+disabled={
+  isCreating ||
+  isUpdating ||
+  !animals ||
+  animals.length === 0
+}
+  startIcon={
+    (isCreating || isUpdating) && (
+      <CircularProgress size={18} color="inherit" />
+    )
+  }
 >
-  {isLoading ? "Submitting..." : "Submit"}
+  {mode === "update" ? "Update" : "Submit"}
 </Button>
             </div>
           </footer>

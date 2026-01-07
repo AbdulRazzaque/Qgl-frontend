@@ -11,7 +11,6 @@ import DeleteReceipt from './DeleteReceipt';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
 import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
 import { useNavigate } from 'react-router-dom';
-import config from '../login/Config';
 const ReceiptTable = () => {
     const [selectedData,setSelectedData]= useState([])
     const [receipts,setReceipts]= useState([])
